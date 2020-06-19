@@ -80,3 +80,8 @@ class Anki(object):
               if len(roots[subword]) > limitsize:
                 roots[subword] = (roots[subword])[0:limitsize] + "..."
       return roots
+
+    def cleanupDuplicates():
+        ids = mw.col.findNotes("(mid:1432900443242 -Details:*$* -Details:) or (mid:1432882338168 $)")
+        Counters.increment("dupe_cleaned", value=len(ids))
+        mw.col.remNotes(ids)

@@ -7,43 +7,8 @@ import codecs
 from .counters import Counters
 from .string import String
 
-class Output(object):
-    def cleanupDuplicates():
-
-        ids = mw.col.findNotes("(mid:1432900443242 -Details:*$* -Details:) or (mid:1432882338168 $)")
-        Counters.increment("dupe_cleaned", value=len(ids))
-        mw.col.remNotes(ids)
-
-    def importFileToModel(model_name, file):
-        deck_id = mw.col.decks.id(":Expressions")
-        mw.col.decks.select(deck_id)
-
-        m = mw.col.models.byName(model_name)
-        deck = mw.col.decks.get(deck_id)
-
-        deck['mid'] = m['id']
-        mw.col.decks.save(deck)
-        m['did'] = deck_id
-
-        importer = TextImporter(mw.col, file)
-        importer.allowHTML = True
-        importer.initMapping()
-        importer.run()
-
-
-    def importOutputFileToDeck():
-        file = u"D:\Japanese\jap_anki\internal\.output.txt"
-        try:
-            Output.importFileToModel("Vocabulary cant write", file)
-            Output.importFileToModel("Vocabulary", file)
-        except:
-            # "Error in import of .output to deck, probably because it doesn't have new words."
-            i = 1
-        Output.cleanupDuplicates()
-
-
-
-    def printDetails(word, kana):
+class Transformer(object):
+    def _makeDetailsString(word, kana):
       kanjis = ReadFile.getKanjisDict()
       details = ""
       for k in word:
@@ -54,15 +19,13 @@ class Output(object):
             details = details + ".<br />"
           else:
             details = details + "$<br />"
-
       roots = Anki.findRootWords(word)
       if len(roots) > 0:
         for root in roots:
           details = details + "<br /> " + root + " " + roots[root]
-
       return details.replace('\r\n','')
 
-    def printTags(word, jisho, extra_tag=""):
+    def _makeTagsString(word, jisho, extra_tag=""):
       tagsString = 'AG2 ' + extra_tag + ' '
       tagsString += 'kanji' + str(String.countKanjis(word)) + ' '
       if jisho['is_common']:
@@ -74,11 +37,9 @@ class Output(object):
           tagsString = tagsString + 'KANA '
         if "onomato" in tag.lower():
           tagsString = tagsString + 'ONOM '
-
       return tagsString
 
-    def makeOutputFileFromData(words, extra_tag=""):
-
+    def _makeOutputFileFromWords(words, extra_tag=""):
         Counters.increment("new", value=len(words))
 
         file = codecs.open('D:/Japanese/jap_anki/internal/.output.txt', 'wb', 'utf-8')
@@ -96,17 +57,44 @@ class Output(object):
               else:
                 file.write(jisho['word'].replace("\t", "") + '\t')
               file.write(jisho['pronunciation'].replace("\t", "") + '\t')
-              file.write(Output.printDetails(jisho['word'], is_kana).replace("\t", "") + '\t')
+              file.write(Transformer._makeDetailsString(jisho['word'], is_kana).replace("\t", "") + '\t')
 
               file.write(jisho['ExtraPronounciations'].replace("\t", "") + '\t')
               file.write(jisho['ExtraMeanings'].replace("\t", "") + '\t')
 
-              file.write(Output.printTags(jisho['word'], jisho, extra_tag).replace("\t", ""))
+              file.write(Transformer._makeTagsString(jisho['word'], jisho, extra_tag).replace("\t", ""))
               file.write('\r\n')
 
         file.close()
 
-    def overwriteInputFile(file, words):
+
+    def _importFileToModel(model_name, file):
+        deck_id = mw.col.decks.id(":Expressions")
+        mw.col.decks.select(deck_id)
+
+        m = mw.col.models.byName(model_name)
+        deck = mw.col.decks.get(deck_id)
+
+        deck['mid'] = m['id']
+        mw.col.decks.save(deck)
+        m['did'] = deck_id
+
+        importer = TextImporter(mw.col, file)
+        importer.allowHTML = True
+        importer.initMapping()
+        importer.run()
+
+    def _importOutputFileToDeck():
+        file = u"D:\Japanese\jap_anki\internal\.output.txt"
+        try:
+            Transformer._importFileToModel("Vocabulary cant write", file)
+            Transformer._importFileToModel("Vocabulary", file)
+        except:
+            # "Error in import of .output to deck, probably because it doesn't have new words."
+            i = 1
+        Anki.cleanupDuplicates()
+
+    def _overwriteInputFile(file, words):
         file = codecs.open('D:/Japanese/jap_anki/internal/' + file, 'wb', 'utf-8')
         if not words:
             file.write(u'　')
@@ -116,7 +104,6 @@ class Output(object):
 
 
     def importInNew():
-
         words = ReadFile.fileToRawWords('in_new.txt')
 
         words_to_add = set()
@@ -154,14 +141,13 @@ class Output(object):
                     words_to_add.add(real_word)
 
 
-        Output.makeOutputFileFromData(words_to_add, extra_tag="auto_freq")
-        Output.importOutputFileToDeck()
-        Output.overwriteInputFile('in_new.txt', jisho_failures)
+        Transformer._makeOutputFileFromWords(words_to_add, extra_tag="auto_freq")
+        Transformer._importOutputFileToDeck()
+        Transformer._overwriteInputFile('in_new.txt', jisho_failures)
         Counters.increment("in_new_jisho_failures", value=len(jisho_failures))
 
 
     def importInReview():
-
         words = ReadFile.fileToRawWords('in_review.txt')
 
         words_to_add = set()
@@ -186,6 +172,6 @@ class Output(object):
                                 Counters.increment("in_review_new")
                                 words_to_add.add(jisho['word'])
 
-        Output.makeOutputFileFromData(words_to_add)
-        Output.importOutputFileToDeck()
-        Output.overwriteInputFile('in_review.txt', [])
+        Transformer._makeOutputFileFromWords(words_to_add)
+        Transformer._importOutputFileToDeck()
+        Transformer._overwriteInputFile('in_review.txt', [])

@@ -5,7 +5,7 @@ from aqt.qt import *
 from .dumps import Dumps
 from .anki import Anki
 from .counters import Counters
-from .output import Output
+from .transformer import Transformer
 
 Counters.resetCounters()
 
@@ -19,8 +19,8 @@ def doRoutine():
   mw.onSync()
   mw.progress.start(immediate=True)
   Counters.resetCounters()
-  Output.importInReview()
-  Output.importInNew()
+  Transformer.importInReview()
+  Transformer.importInNew()
   Anki.resetDecks()
   mw.progress.finish()
   mw.onSync()
