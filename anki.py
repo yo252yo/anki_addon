@@ -1,6 +1,7 @@
 from aqt import mw
 from .string import String
 from .counters import Counters
+from .dumps import Dumps
 
 TAG_MANUAL = "+"
 TAG_TRASH = "XX"
@@ -46,7 +47,8 @@ class Anki(object):
 
     def deleteCard(card):
       Counters.increment("deleted", value=len(card['cid']))
-      mw.col.remNotes(card['cid'])
+      mw.col.remCards(card['cid'])
+      mw.reset()
 
     def rescheduleIfKanjis(word):
       if len(word) != 1:
@@ -84,4 +86,5 @@ class Anki(object):
     def cleanupDuplicates():
         ids = mw.col.findNotes("(mid:1432900443242 -Details:*$* -Details:) or (mid:1432882338168 $)")
         Counters.increment("dupe_cleaned", value=len(ids))
+        Dumps.dump_ids('D:/Japanese/jap_anki/internal/.cleanups.txt', ids)
         mw.col.remNotes(ids)

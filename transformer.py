@@ -1,9 +1,11 @@
 from aqt import mw
 from anki.importing import TextImporter
+import codecs
+import shutil
+import time
 from .anki import Anki
 from .readfile import ReadFile
 from .jisho import Jisho
-import codecs
 from .counters import Counters
 from .string import String
 
@@ -39,10 +41,11 @@ class Transformer(object):
           tagsString = tagsString + 'ONOM '
       return tagsString
 
-    def _makeOutputFileFromWords(words, extra_tag=""):
+    def _makeOutputFileFromWords(filename, words, extra_tag=""):
         Counters.increment("new", value=len(words))
+        Counters.increment("new:" + filename, value=len(words))
 
-        file = codecs.open('D:/Japanese/jap_anki/internal/.output.txt', 'wb', 'utf-8')
+        file = codecs.open('D:/Japanese/jap_anki/internal/' + filename, 'wb', 'utf-8')
 
         for word in words:
           for jisho in Jisho.getJisho(word):
@@ -67,8 +70,7 @@ class Transformer(object):
 
         file.close()
 
-
-    def _importFileToModel(model_name, file):
+    def _importFileToCards(file, model_name):
         deck_id = mw.col.decks.id(":Expressions")
         mw.col.decks.select(deck_id)
 
@@ -84,27 +86,32 @@ class Transformer(object):
         importer.initMapping()
         importer.run()
 
-    def _importOutputFileToDeck():
-        file = u"D:\Japanese\jap_anki\internal\.output.txt"
+    def _importOutputFileToDeck(filename):
+        file = ("D:/Japanese/jap_anki/internal/" + filename)
         try:
-            Transformer._importFileToModel("Vocabulary cant write", file)
-            Transformer._importFileToModel("Vocabulary", file)
+            Transformer._importFileToCards(file, "Vocabulary cant write")
+            Transformer._importFileToCards(file, "Vocabulary")
         except:
             # "Error in import of .output to deck, probably because it doesn't have new words."
             i = 1
+        time.sleep(1)
+        mw.reset()
         Anki.cleanupDuplicates()
 
-    def _overwriteInputFile(file, words):
-        file = codecs.open('D:/Japanese/jap_anki/internal/' + file, 'wb', 'utf-8')
+    def _overwriteInputFile(filename, words):
+        overwritten_file = 'D:/Japanese/jap_anki/' + filename
+        copy_file = 'D:/Japanese/jap_anki/internal/copy_' + filename
+
+        shutil.copyfile(overwritten_file, copy_file)
+        file = codecs.open(overwritten_file, 'wb', 'utf-8')
         if not words:
             file.write(u'　')
         for word in words:
             file.write(word + ' ')
         file.close()
 
-
-    def importInNew():
-        words = ReadFile.fileToRawWords('in_new.txt')
+    def _processInNew(filename):
+        words = ReadFile.fileToRawWords(filename)
 
         words_to_add = set()
         jisho_failures = set()
@@ -122,9 +129,7 @@ class Transformer(object):
                     jisho_failures.add(word)
                 continue
 
-
             real_word = jisho['word']
-
             card = Anki.getCardForWord(real_word)
             if not card:
                 Counters.increment("in_new_new")
@@ -140,15 +145,10 @@ class Transformer(object):
                     Anki.deleteCard(card)
                     words_to_add.add(real_word)
 
+            return (words_to_add, jisho_failures)
 
-        Transformer._makeOutputFileFromWords(words_to_add, extra_tag="auto_freq")
-        Transformer._importOutputFileToDeck()
-        Transformer._overwriteInputFile('in_new.txt', jisho_failures)
-        Counters.increment("in_new_jisho_failures", value=len(jisho_failures))
-
-
-    def importInReview():
-        words = ReadFile.fileToRawWords('in_review.txt')
+    def _processInReview(filename):
+        words = ReadFile.fileToRawWords(filename)
 
         words_to_add = set()
 
@@ -171,7 +171,18 @@ class Transformer(object):
                             if not card:
                                 Counters.increment("in_review_new")
                                 words_to_add.add(jisho['word'])
+        return (words_to_add, [])
 
-        Transformer._makeOutputFileFromWords(words_to_add)
-        Transformer._importOutputFileToDeck()
-        Transformer._overwriteInputFile('in_review.txt', [])
+    def _importWords(input_file_name, output_file_name, words_to_add, jisho_failures):
+        Transformer._makeOutputFileFromWords(output_file_name, words_to_add, extra_tag="auto_freq")
+        Transformer._importOutputFileToDeck(output_file_name)
+        Transformer._overwriteInputFile(input_file_name, jisho_failures)
+        Counters.increment("in_new_jisho_failures", value=len(jisho_failures))
+
+    def importInNew():
+        (words_to_add, jisho_failures) = Transformer._processInNew('in_new.txt')
+        Transformer._importWords('in_new.txt', 'output_in_new.txt', words_to_add, jisho_failures)
+
+    def importInReview():
+        (words_to_add, jisho_failures) = Transformer._processInReview('in_review.txt')
+        Transformer._importWords('in_review.txt', 'output_in_review.txt', words_to_add, jisho_failures)

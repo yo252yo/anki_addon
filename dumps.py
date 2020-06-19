@@ -3,6 +3,7 @@ from aqt import mw
 import codecs
 import datetime
 import math
+from .counters import Counters
 
 class Dumps(object):
     def write(log, string):
@@ -83,3 +84,13 @@ class Dumps(object):
         log.write(Counters.get("extra_polysemic") + "\t")
         log.write("\r\n")
         log.close()
+
+    def dump_ids(filename, ids):
+        file = codecs.open(filename, 'wb', 'utf-8')
+        file.write(str(ids) + "\n")
+
+        for nid in ids :
+            # create string using the japanese and english vocabCardJapanese vocabCardEnglish
+            vocabNote = mw.col.getNote(nid)
+            file.write(vocabNote['Writing'] + "\n")
+        file.close()

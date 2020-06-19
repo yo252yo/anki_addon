@@ -16,6 +16,12 @@ class Jisho(object):
         else:
             return ""
 
+    def _tryGetJishoWord(data):
+        result = Jisho.tryGetJishoField(data, 'word')
+        if result == "":
+            result = Jisho.tryGetJishoField(data, 'reading')
+        return result
+
     def _getJishoPronouciations(word_data):
         main = Jisho._tryGetJishoField(word_data['japanese'][0], 'reading')
         all = set([Jisho._tryGetJishoField(j, 'reading') for j in word_data['japanese']]).union(set([Jisho._tryGetJishoField(j, 'word') for j in word_data['japanese']]))
@@ -37,10 +43,7 @@ class Jisho(object):
     def _getJishoOfData(word_data):
         jisho = {}
         pronunciation, pronounciations = Jisho._getJishoPronouciations(word_data)
-        try:
-            jisho['word'] = word_data['japanese'][0]['word'].rstrip('\r\n')
-        except:
-            jisho['word'] = pronunciation
+        jisho['word'] = Jisho._tryGetJishoWord(word_data['japanese'][0])
         jisho['pronunciation'] = pronunciation
         try:
             pronounciations.remove(jisho['word'])
@@ -75,7 +78,7 @@ class Jisho(object):
         words = [result[0]['word']]
 
         for word_data in data['data'][1:]:
-            current_word = word_data['japanese'][0]['word']
+            current_word = Jisho._tryGetJishoWord(word_data['japanese'][0])
             if current_word in words:
                 i = words.index(current_word)
 

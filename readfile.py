@@ -8,14 +8,14 @@ class ReadFile(object):
       return word
 
     def fileToRawWords(file):
-        f = codecs.open('D:/Japanese/jap_anki/internal/' + file, 'rb', 'utf-8')
+        f = codecs.open('D:/Japanese/jap_anki/' + file, 'rb', 'utf-8')
         words = set()
         for line in f:
           for rawline in line.split(' '):
               for rawword in rawline.split(u'　'):
                 if not rawword or rawword == '' or rawword == ' ' or rawword == u'　':
                     continue
-                word = File._handleWordEncoding(rawword).rstrip('\r\n')
+                word = ReadFile._handleWordEncoding(rawword).rstrip('\r\n')
                 words.add(word)
         return words
 
@@ -36,7 +36,7 @@ class ReadFile(object):
         kanjis = {}
         sim = codecs.open('D:/Japanese/jap_anki/dumps/kanjis_old.txt', 'rb', 'utf-8')
         for kanji in sim:
-          kanji = File._handleWordEncoding(kanji)
+          kanji = ReadFile._handleWordEncoding(kanji)
           k = kanji[:1]
           d = kanji[4:]
           kanjis[k] = d
