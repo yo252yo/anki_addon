@@ -168,7 +168,7 @@ class Output(object):
 
         for original_word in words:
             Counters.increment("in_review_processed")
-            if Anki.rescheduleKanjis(original_word):
+            if Anki.rescheduleIfKanjis(original_word):
                 continue
             card = Anki.getCardForWord(original_word)
             if card:

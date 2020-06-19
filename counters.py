@@ -26,7 +26,7 @@ class Counters:
     def resetCounters():
         Counters._COUNTERS = {}
 
-    def log(filename):
+    def logToFile(filename):
         log = codecs.open(filename, 'a', 'utf-8')
         date = datetime.datetime.today().strftime('%Y-%m-%d')
         log.write(str(date) + "\t")

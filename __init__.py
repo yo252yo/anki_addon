@@ -21,7 +21,7 @@ def doRoutine():
   Anki.resetDecks()
   mw.progress.finish()
   mw.onSync()
-  Counters.log('D:/Japanese/jap_anki/logs/log.txt')
+  Counters.logToFile('D:/Japanese/jap_anki/logs/log.txt')
   Counters.show()
   Counters.sanityCheck()
 
