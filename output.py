@@ -1,7 +1,7 @@
 from aqt import mw
 from anki.importing import TextImporter
 from .anki import Anki
-from .file import File
+from .readfile import ReadFile
 from .jisho import Jisho
 import codecs
 from .counters import Counters
@@ -44,7 +44,7 @@ class Output(object):
 
 
     def printDetails(word, kana):
-      kanjis = File.getKanjisDict()
+      kanjis = ReadFile.getKanjisDict()
       details = ""
       for k in word:
         try:
@@ -117,7 +117,7 @@ class Output(object):
 
     def importInNew():
 
-        words = File.fileToRawWords('in_new.txt')
+        words = ReadFile.fileToRawWords('in_new.txt')
 
         words_to_add = set()
         jisho_failures = set()
@@ -162,7 +162,7 @@ class Output(object):
 
     def importInReview():
 
-        words = File.fileToRawWords('in_review.txt')
+        words = ReadFile.fileToRawWords('in_review.txt')
 
         words_to_add = set()
 

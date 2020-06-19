@@ -1,8 +1,8 @@
 
 import codecs
 
-class File(object):
-    def handleWordEncoding(word):
+class ReadFile(object):
+    def _handleWordEncoding(word):
       if word.startswith(u'\ufeff'):
         word = word[1:]
       return word
@@ -15,9 +15,8 @@ class File(object):
               for rawword in rawline.split(u'　'):
                 if not rawword or rawword == '' or rawword == ' ' or rawword == u'　':
                     continue
-                word = File.handleWordEncoding(rawword).rstrip('\r\n')
+                word = File._handleWordEncoding(rawword).rstrip('\r\n')
                 words.add(word)
-
         return words
 
     #def getKanjisDict():
@@ -25,8 +24,8 @@ class File(object):
     #    sim = codecs.open('D:/Japanese/jap_anki/dumps/kanjis_details.txt', 'rb', 'utf-8')
     #    cr = csv.reader(sim)
     #    for row in cr:
-    #      k = File.handleWordEncoding(row[0])
-    #      d = File.handleWordEncoding(row[2]) + " (" + File.handleWordEncoding(row[1]) + ")"
+    #      k = File._handleWordEncoding(row[0])
+    #      d = File._handleWordEncoding(row[2]) + " (" + File._handleWordEncoding(row[1]) + ")"
     #      kanjis[k] = d
     #    sim.close()
     #    return kanjis
@@ -37,7 +36,7 @@ class File(object):
         kanjis = {}
         sim = codecs.open('D:/Japanese/jap_anki/dumps/kanjis_old.txt', 'rb', 'utf-8')
         for kanji in sim:
-          kanji = File.handleWordEncoding(kanji)
+          kanji = File._handleWordEncoding(kanji)
           k = kanji[:1]
           d = kanji[4:]
           kanjis[k] = d
