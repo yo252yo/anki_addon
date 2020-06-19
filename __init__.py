@@ -34,7 +34,7 @@ def addActionMenu(text, function):
     mw.form.menuTools.addAction(action)
 
 addActionMenu("==> Do everything", doRoutine)
-addActionMenu("> Import in_review.txt", Output.importInReview)
-addActionMenu("> Import in_new.txt", Output.importInNew)
+addActionMenu("> Import in_review.txt", Transformer.importInReview)
+addActionMenu("> Import in_new.txt", Transformer.importInNew)
 addActionMenu("> Reset decks", Anki.resetDecks)
 addActionMenu("> Force logging", doLogging)
