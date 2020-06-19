@@ -2,12 +2,17 @@
 from aqt import mw
 from aqt.qt import *
 
-from .logs import Logs
+from .dumps import Dumps
 from .anki import Anki
 from .counters import Counters
 from .output import Output
 
 Counters.resetCounters()
+
+def doLogging():
+    Dumps.logStats('D:/Japanese/jap_anki/logs/log_counts.txt')
+    Dumps.logKanjis('D:/Japanese/jap_anki/dumps/kanjis_ivl.txt')
+    Dumps.logCounters('D:/Japanese/jap_anki/logs/log.txt')
 
 
 def doRoutine():
@@ -16,12 +21,10 @@ def doRoutine():
   Counters.resetCounters()
   Output.importInReview()
   Output.importInNew()
-  Logs.logStats()
-  Logs.logKanjis()
   Anki.resetDecks()
   mw.progress.finish()
   mw.onSync()
-  Counters.logToFile('D:/Japanese/jap_anki/logs/log.txt')
+  doLogging()
   Counters.show()
   Counters.sanityCheck()
 
@@ -35,6 +38,3 @@ addActionMenu("Import in_new.txt words", Output.importInNew)
 addActionMenu("Import in_review.txt words", Output.importInReview)
 addActionMenu("Import output", Output.importOutputFileToDeck)
 addActionMenu("Reset decks", Anki.resetDecks)
-
-addActionMenu("Log Stats", Logs.logStats)
-addActionMenu("Log Kanjis", Logs.logKanjis)

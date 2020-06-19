@@ -1,6 +1,3 @@
-
-import codecs
-import datetime
 from aqt.utils import showInfo
 
 class Counters:
@@ -25,27 +22,6 @@ class Counters:
 
     def resetCounters():
         Counters._COUNTERS = {}
-
-    def logToFile(filename):
-        log = codecs.open(filename, 'a', 'utf-8')
-        date = datetime.datetime.today().strftime('%Y-%m-%d')
-        log.write(str(date) + "\t")
-        log.write("0\t")
-        log.write(Counters.get("expanded") + "\t")
-        log.write(Counters.get("new") + "\t")
-        log.write(Counters.get("deleted") + "\t")
-        log.write(Counters.get("rescheduled") + "\t")
-        log.write("0\t")
-        log.write(Counters.get("in_new_processed") + "\t")
-        log.write(Counters.get("in_new_new") + "\t")
-        log.write(Counters.get("in_new_renew") + "\t")
-        log.write(Counters.get("in_review_processed") + "\t")
-        log.write(Counters.get("in_review_new") + "\t")
-        log.write(Counters.get("in_review_resched") + "\t")
-        log.write(Counters.get("kanjis") + "\t")
-        log.write(Counters.get("extra_polysemic") + "\t")
-        log.write("\r\n")
-        log.close()
 
     def show():
         showInfo("counters:\r\n" + Counters.printAll())
