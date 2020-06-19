@@ -1,4 +1,5 @@
 from aqt.utils import showInfo
+import codecs
 
 class Counters:
     _COUNTERS = {}
@@ -23,7 +24,13 @@ class Counters:
     def resetCounters():
         Counters._COUNTERS = {}
 
+    def dump():
+        file = codecs.open("D:/Japanese/jap_anki/internal/.counters.txt", 'wb', 'utf-8')
+        file.write(Counters.printAll())
+        file.close()
+
     def show():
+        Counters.dump()
         showInfo("counters:\r\n" + Counters.printAll())
 
     def sanityCheck():

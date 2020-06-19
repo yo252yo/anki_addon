@@ -43,14 +43,13 @@ class Transformer(object):
       return tagsString
 
     def _makeOutputFileFromWords(filename, words, extra_tag=""):
-        Counters.increment("new", value=len(words))
-        Counters.increment("new:" + filename, value=len(words))
-        Counters.increment("new_" + extra_tag, value=len(words))
-
         file = codecs.open('D:/Japanese/jap_anki/internal/' + filename, 'wb', 'utf-8')
 
         for word in words:
           for jisho in Jisho.getJisho(word):
+              Counters.increment("new")
+              Counters.increment("new:" + filename)
+              Counters.increment("new_" + extra_tag)
               is_kana = False
               for tag in jisho['tags']:
                 if "kana alone" in tag.lower():
