@@ -3,7 +3,9 @@ import urllib
 from .counters import Counters
 
 class Jisho(object):
-    def tryGetJishoField(data, field):
+    _JISHO = {}
+
+    def _tryGetJishoField(data, field):
         if field in data:
             result = data[field]
 
@@ -15,8 +17,8 @@ class Jisho(object):
             return ""
 
     def _getJishoPronouciations(word_data):
-        main = Jisho.tryGetJishoField(word_data['japanese'][0], 'reading')
-        all = set([Jisho.tryGetJishoField(j, 'reading') for j in word_data['japanese']]).union(set([Jisho.tryGetJishoField(j, 'word') for j in word_data['japanese']]))
+        main = Jisho._tryGetJishoField(word_data['japanese'][0], 'reading')
+        all = set([Jisho._tryGetJishoField(j, 'reading') for j in word_data['japanese']]).union(set([Jisho._tryGetJishoField(j, 'word') for j in word_data['japanese']]))
         try:
           all.remove("")
         except:
@@ -24,25 +26,21 @@ class Jisho(object):
         return (main, all)
 
     def _getJishoDefinition(word_data):
-        main = Jisho.tryGetJishoField(word_data['senses'][0], 'english_definitions')
-        all = set([Jisho.tryGetJishoField(j, 'english_definitions') for j in word_data['senses']])
+        main = Jisho._tryGetJishoField(word_data['senses'][0], 'english_definitions')
+        all = set([Jisho._tryGetJishoField(j, 'english_definitions') for j in word_data['senses']])
         try:
           all.remove("")
         except:
           i = 1 # expected
         return (main, all)
 
-
     def _getJishoOfData(word_data):
         jisho = {}
-
         pronunciation, pronounciations = Jisho._getJishoPronouciations(word_data)
-
         try:
             jisho['word'] = word_data['japanese'][0]['word'].rstrip('\r\n')
         except:
             jisho['word'] = pronunciation
-
         jisho['pronunciation'] = pronunciation
         try:
             pronounciations.remove(jisho['word'])
@@ -65,7 +63,6 @@ class Jisho(object):
         return jisho
 
     def _getJishoOfWord(word):
-
         Counters.increment("jisho_queries")
 
         url = 'http://jisho.org/api/v1/search/words?keyword=' + urllib.parse.quote(word)
@@ -91,7 +88,7 @@ class Jisho(object):
                 result[i]['ExtraMeanings'] += "<br />"
                 result[i]['ExtraMeanings'] += "//".join(definitions)
 
-            elif current_word == word or Jisho.tryGetJishoField(word_data, 'reading') == word:
+            elif current_word == word or Jisho._tryGetJishoField(word_data, 'reading') == word:
                 Counters.increment("extra_polysemic")
                 result.append(Jisho._getJishoOfData(word_data))
                 words.append(current_word)
@@ -99,21 +96,15 @@ class Jisho(object):
         return result
 
     def getJisho(word):
-      global _JISHO
-      try:
-        _JISHO
-      except:
-        _JISHO = {}
-
-      if not word in _JISHO:
+      if not word in Jisho._JISHO:
         try:
           jisho = Jisho._getJishoOfWord(word)
-          _JISHO[word] = jisho
-          _JISHO[jisho[0]['word']] = jisho
+          Jisho._JISHO[word] = jisho
+          Jisho._JISHO[jisho[0]['word']] = jisho
         except OSError as inst: # not in jisho
-          _JISHO[word] = "N"
+          Jisho._JISHO[word] = "N"
 
-      if _JISHO[word] == "N":
+      if Jisho._JISHO[word] == "N":
         return [None]
       else:
-        return _JISHO[word]
+        return Jisho._JISHO[word]
