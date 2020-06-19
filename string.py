@@ -8,7 +8,6 @@ class String(object):
       output = re.sub(hiragana, '', text)
       output = re.sub(katakana, '', output)
       #output = unicode(output)
-
       return output
 
     def countKanjis(word):
@@ -23,7 +22,5 @@ class String(object):
             subword = kanjiword[i:(j+1)]
             if (len(subword) >= 2 and not subword in result):
               result.add(subword)
-
-
       Counters.increment("expanded", value=len(result)-1)
       return result
