@@ -33,8 +33,8 @@ def addActionMenu(text, function):
     action.triggered.connect(function)
     mw.form.menuTools.addAction(action)
 
-addActionMenu("=> Do everything", doRoutine)
-addActionMenu("Import in_new.txt words", Output.importInNew)
-addActionMenu("Import in_review.txt words", Output.importInReview)
-addActionMenu("Import output", Output.importOutputFileToDeck)
-addActionMenu("Reset decks", Anki.resetDecks)
+addActionMenu("==> Do everything", doRoutine)
+addActionMenu("> Import in_review.txt", Output.importInReview)
+addActionMenu("> Import in_new.txt", Output.importInNew)
+addActionMenu("> Reset decks", Anki.resetDecks)
+addActionMenu("> Force logging", doLogging)
