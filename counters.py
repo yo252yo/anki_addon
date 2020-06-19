@@ -29,7 +29,7 @@ class Counters:
 
     def printCounters():
 
-        log = codecs.open('D:/Japanese/jap_anki/log.txt', 'a', 'utf-8')
+        log = codecs.open('D:/Japanese/jap_anki/logs/log.txt', 'a', 'utf-8')
         date = datetime.datetime.today().strftime('%Y-%m-%d')
         log.write(str(date) + "\t")
 

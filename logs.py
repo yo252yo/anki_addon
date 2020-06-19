@@ -10,7 +10,7 @@ class Logs(object):
 
 
     def logStats():
-        log = codecs.open('D:/Japanese/jap_anki/log_counts.txt', 'a', 'utf-8')
+        log = codecs.open('D:/Japanese/jap_anki/logs/log_counts.txt', 'a', 'utf-8')
         date = datetime.datetime.today().strftime('%Y-%m-%d')
         log.write(str(date) + "\t")
         Logs.write(log, "is:new -is:suspended")
@@ -40,7 +40,7 @@ class Logs(object):
         log.close()
 
     def logKanjis():
-        log = codecs.open('D:/Japanese/jap_anki/kanjis_ivl.txt', 'w', 'utf-8')
+        log = codecs.open('D:/Japanese/jap_anki/dumps/kanjis_ivl.txt', 'w', 'utf-8')
         kanjis_cards = mw.col.findCards("deck::Kanjis::All")
         reverse_cards = mw.col.findCards("deck::Kanjis::Reverse")
         ivls = {}

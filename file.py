@@ -8,7 +8,7 @@ class File(object):
       return word
 
     def fileToRawWords(file):
-        f = codecs.open('D:/Japanese/jap_anki/' + file, 'rb', 'utf-8')
+        f = codecs.open('D:/Japanese/jap_anki/internal/' + file, 'rb', 'utf-8')
         words = set()
         for line in f:
           for rawline in line.split(' '):
@@ -22,7 +22,7 @@ class File(object):
 
     #def getKanjisDict():
     #    kanjis = {}
-    #    sim = codecs.open('D:/Japanese/jap_anki/kanjis_details.txt', 'rb', 'utf-8')
+    #    sim = codecs.open('D:/Japanese/jap_anki/dumps/kanjis_details.txt', 'rb', 'utf-8')
     #    cr = csv.reader(sim)
     #    for row in cr:
     #      k = File.handleWordEncoding(row[0])
@@ -35,7 +35,7 @@ class File(object):
     # OLD VERSION, REPLACE BY THE ABOVE
     def getKanjisDict():
         kanjis = {}
-        sim = codecs.open('D:/Japanese/jap_anki/kanjis_old.txt', 'rb', 'utf-8')
+        sim = codecs.open('D:/Japanese/jap_anki/dumps/kanjis_old.txt', 'rb', 'utf-8')
         for kanji in sim:
           kanji = File.handleWordEncoding(kanji)
           k = kanji[:1]

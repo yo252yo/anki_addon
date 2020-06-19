@@ -32,7 +32,7 @@ class Output(object):
 
 
     def importOutputFileToDeck():
-        file = u"D:\Japanese\jap_anki\.output.txt"
+        file = u"D:\Japanese\jap_anki\internal\.output.txt"
         try:
             Output.importFileToModel("Vocabulary cant write", file)
             Output.importFileToModel("Vocabulary", file)
@@ -81,7 +81,7 @@ class Output(object):
 
         Counters.increment("new", value=len(words))
 
-        file = codecs.open('D:/Japanese/jap_anki/.output.txt', 'wb', 'utf-8')
+        file = codecs.open('D:/Japanese/jap_anki/internal/.output.txt', 'wb', 'utf-8')
 
         for word in words:
           for jisho in Jisho.getJisho(word):
@@ -107,7 +107,7 @@ class Output(object):
         file.close()
 
     def overwriteInputFile(file, words):
-        file = codecs.open('D:/Japanese/jap_anki/' + file, 'wb', 'utf-8')
+        file = codecs.open('D:/Japanese/jap_anki/internal/' + file, 'wb', 'utf-8')
         if not words:
             file.write(u'　')
         for word in words:
