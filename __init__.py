@@ -18,85 +18,11 @@ import test
 
 from .logs import Logs
 from .anki import Anki
-
-TAG_MANUAL = "+"
-TAG_TRASH = "XX"
-
-# ============================================================================================
-# File functions
-# ============================================================================================
-
-def handleWordEncoding(word):
-  if word.startswith(u'\ufeff'):
-    word = word[1:]
-  return word
-
-def fileToRawWords(file):
-    f = codecs.open('D:/Japanese/jap_anki/' + file, 'rb', 'utf-8')
-    words = set()
-    for line in f:
-      for rawline in line.split(' '):
-          for rawword in rawline.split(u'　'):
-            if not rawword or rawword == '' or rawword == ' ' or rawword == u'　':
-                continue
-            word = handleWordEncoding(rawword).rstrip('\r\n')
-            words.add(word)
-
-    return words
-
-#def getKanjisDict():
-#    kanjis = {}
-#    sim = codecs.open('D:/Japanese/jap_anki/kanjis_details.txt', 'rb', 'utf-8')
-#    cr = csv.reader(sim)
-#    for row in cr:
-#      k = handleWordEncoding(row[0])
-#      d = handleWordEncoding(row[2]) + " (" + handleWordEncoding(row[1]) + ")"
-#      kanjis[k] = d
-#    sim.close()
-#    return kanjis
+from .string import String
+from .jisho import Jisho
+from .file import File
 
 
-# OLD VERSION, REPLACE BY THE ABOVE
-def getKanjisDict():
-    kanjis = {}
-    sim = codecs.open('D:/Japanese/jap_anki/kanjis_old.txt', 'rb', 'utf-8')
-    for kanji in sim:
-      kanji = handleWordEncoding(kanji)
-      k = kanji[:1]
-      d = kanji[4:]
-      kanjis[k] = d
-    sim.close()
-    return kanjis
-
-# ============================================================================================
-# String functions
-# ============================================================================================
-
-def kanjify(text):
-  hiragana = u'[ぁ-ゟ]'
-  katakana = u'[゠-ヿ]'
-  output = re.sub(hiragana, '', text)
-  output = re.sub(katakana, '', output)
-  #output = unicode(output)
-
-  return output
-
-def countKanjis(word):
-  return len(kanjify(word))
-
-def expandToSubwords(word):
-  result = set()
-  result.add(word)
-  kanjiword = kanjify(word)
-  for i in range(0, len(kanjiword)):
-    for j in range(i, len(kanjiword)):
-        subword = kanjiword[i:(j+1)]
-        if (len(subword) >= 2 and not subword in result):
-          result.add(subword)
-
-  global COUNTERS
-  COUNTERS.increment("expanded", value=len(result)-1)
-  return result
 
 # ============================================================================================
 # Utils for printing
@@ -104,7 +30,7 @@ def expandToSubwords(word):
 
 def findRootWords(word):
   limitsize = 25
-  kanjiword = kanjify(word)
+  kanjiword = String.kanjify(word)
   roots = {}
   for i in range(0, len(kanjiword)):
     for j in range(i, len(kanjiword)):
@@ -159,132 +85,13 @@ def importOutputFileToDeck():
     cleanupDuplicates()
 
 
-# ============================================================================================
-# Jisho interaction
-# ============================================================================================
-
-def tryGetJishoField(data, field):
-    if field in data:
-        result = data[field]
-
-        if type(result) == str:
-            return result.replace(",", ".").rstrip('\r\n').lower()
-        else:
-            return ". ".join([i.replace(",", ".").rstrip('\r\n').lower() for i in result])
-    else:
-        return ""
-
-def _getJishoPronouciations(word_data):
-    main = tryGetJishoField(word_data['japanese'][0], 'reading')
-    all = set([tryGetJishoField(j, 'reading') for j in word_data['japanese']]).union(set([tryGetJishoField(j, 'word') for j in word_data['japanese']]))
-    try:
-      all.remove("")
-    except:
-      i = 1 # expected
-    return (main, all)
-
-def _getJishoDefinition(word_data):
-    main = tryGetJishoField(word_data['senses'][0], 'english_definitions')
-    all = set([tryGetJishoField(j, 'english_definitions') for j in word_data['senses']])
-    try:
-      all.remove("")
-    except:
-      i = 1 # expected
-    return (main, all)
-
-
-def _getJishoOfData(word_data):
-    jisho = {}
-
-    pronunciation, pronounciations = _getJishoPronouciations(word_data)
-
-    try:
-        jisho['word'] = word_data['japanese'][0]['word'].rstrip('\r\n')
-    except:
-        jisho['word'] = pronunciation
-
-    jisho['pronunciation'] = pronunciation
-    try:
-        pronounciations.remove(jisho['word'])
-        pronounciations.remove(pronunciation)
-    except:
-        print("not supposed to happen but no biggie")
-    jisho['ExtraPronounciations'] = "//".join(pronounciations)
-
-    definition, definitions = _getJishoDefinition(word_data)
-    jisho['definition'] = definition
-    try:
-        definitions.remove(definition)
-    except:
-        print("not supposed to happen but no biggie")
-    jisho['ExtraMeanings'] = "//".join(definitions)
-
-    jisho['tags'] = set().union(word_data['tags'], word_data['senses'][0]['tags'])
-    jisho['is_common'] = word_data['is_common']
-
-    return jisho
-
-def _getJishoOfWord(word):
-    global COUNTERS
-    COUNTERS.increment("jisho_queries")
-
-    url = 'http://jisho.org/api/v1/search/words?keyword=' + urllib.parse.quote(word)
-    data = json.load(urllib.request.urlopen(url))
-
-    if 'data' not in data or len(data['data']) < 1:
-        raise OSError
-
-    result = [_getJishoOfData(data['data'][0])]
-    words = [result[0]['word']]
-
-    for word_data in data['data'][1:]:
-        current_word = word_data['japanese'][0]['word']
-        if current_word in words:
-            i = words.index(current_word)
-
-            COUNTERS.increment("extra_polysemic")
-            pronunciation, pronounciations = _getJishoPronouciations(word_data)
-            result[i]['ExtraPronounciations'] += "<br />"
-            result[i]['ExtraPronounciations'] += "//".join(pronounciations)
-
-            definition, definitions = _getJishoDefinition(word_data)
-            result[i]['ExtraMeanings'] += "<br />"
-            result[i]['ExtraMeanings'] += "//".join(definitions)
-
-        elif current_word == word or tryGetJishoField(word_data, 'reading') == word:
-            COUNTERS.increment("extra_polysemic")
-            result.append(_getJishoOfData(word_data))
-            words.append(current_word)
-
-    return result
-
-def getJisho(word):
-  global _JISHO
-  try:
-    _JISHO
-  except:
-    _JISHO = {}
-
-  if not word in _JISHO:
-    try:
-      jisho = _getJishoOfWord(word)
-      _JISHO[word] = jisho
-      _JISHO[jisho[0]['word']] = jisho
-    except OSError as inst: # not in jisho
-      _JISHO[word] = "N"
-
-  if _JISHO[word] == "N":
-    return [None]
-  else:
-    return _JISHO[word]
-
 
 # ============================================================================================
 # Print output file
 # ============================================================================================
 
 def printDetails(word, kana):
-  kanjis = getKanjisDict()
+  kanjis = File.getKanjisDict()
   details = ""
   for k in word:
     try:
@@ -304,7 +111,7 @@ def printDetails(word, kana):
 
 def printTags(word, jisho, extra_tag=""):
   tagsString = 'AG2 ' + extra_tag + ' '
-  tagsString += 'kanji' + str(countKanjis(word)) + ' '
+  tagsString += 'kanji' + str(String.countKanjis(word)) + ' '
   if jisho['is_common']:
     tagsString = tagsString + 'COMMON '
   if len(findRootWords(word)) > 0:
@@ -324,7 +131,7 @@ def makeOutputFileFromData(words, extra_tag=""):
     file = codecs.open('D:/Japanese/jap_anki/.output.txt', 'wb', 'utf-8')
 
     for word in words:
-      for jisho in getJisho(word):
+      for jisho in Jisho.getJisho(word):
           is_kana = False
           for tag in jisho['tags']:
             if "kana alone" in tag.lower():
@@ -361,14 +168,14 @@ def overwriteInputFile(file, words):
 
 def importInNew():
     global COUNTERS
-    words = fileToRawWords('in_new.txt')
+    words = File.fileToRawWords('in_new.txt')
 
     words_to_add = set()
     jisho_failures = set()
 
     for word in words:
         COUNTERS.increment("in_new_processed")
-        jisho = getJisho(word)[0]
+        jisho = Jisho.getJisho(word)[0]
         if not jisho or 'word' not in jisho:
             card = Anki.getCardForWord(word)
 
@@ -406,7 +213,7 @@ def importInNew():
 
 def importInReview():
     global COUNTERS
-    words = fileToRawWords('in_review.txt')
+    words = File.fileToRawWords('in_review.txt')
 
     words_to_add = set()
 
@@ -419,11 +226,11 @@ def importInReview():
             Anki.rescheduleCard(card)
             COUNTERS.increment("in_review_resched")
         else:
-            words_expanded = expandToSubwords(original_word)
+            words_expanded = String.expandToSubwords(original_word)
             for word in words_expanded:
                 card = Anki.getCardForWord(word)
                 if not card:
-                    jisho = getJisho(word)[0]
+                    jisho = Jisho.getJisho(word)[0]
                     if jisho:
                         card = Anki.getCardForWord(jisho['word'])
                         if not card:

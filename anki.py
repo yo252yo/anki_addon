@@ -1,5 +1,8 @@
 from aqt import mw
 
+TAG_MANUAL = "+"
+TAG_TRASH = "XX"
+
 class Anki(object):
     def _getAnkiOfWord(word):
         global COUNTERS

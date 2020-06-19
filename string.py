@@ -1,0 +1,28 @@
+import re
+
+class String(object):
+    def kanjify(text):
+      hiragana = u'[ぁ-ゟ]'
+      katakana = u'[゠-ヿ]'
+      output = re.sub(hiragana, '', text)
+      output = re.sub(katakana, '', output)
+      #output = unicode(output)
+
+      return output
+
+    def countKanjis(word):
+      return len(String.kanjify(word))
+
+    def expandToSubwords(word):
+      result = set()
+      result.add(word)
+      kanjiword = String.kanjify(word)
+      for i in range(0, len(kanjiword)):
+        for j in range(i, len(kanjiword)):
+            subword = kanjiword[i:(j+1)]
+            if (len(subword) >= 2 and not subword in result):
+              result.add(subword)
+
+      global COUNTERS
+      COUNTERS.increment("expanded", value=len(result)-1)
+      return result
