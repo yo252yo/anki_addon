@@ -1,5 +1,6 @@
 import json
 import urllib
+from .counters import Counters
 
 class Jisho(object):
     def tryGetJishoField(data, field):
@@ -64,8 +65,8 @@ class Jisho(object):
         return jisho
 
     def _getJishoOfWord(word):
-        global COUNTERS
-        COUNTERS.increment("jisho_queries")
+
+        Counters.increment("jisho_queries")
 
         url = 'http://jisho.org/api/v1/search/words?keyword=' + urllib.parse.quote(word)
         data = json.load(urllib.request.urlopen(url))
@@ -81,7 +82,7 @@ class Jisho(object):
             if current_word in words:
                 i = words.index(current_word)
 
-                COUNTERS.increment("extra_polysemic")
+                Counters.increment("extra_polysemic")
                 pronunciation, pronounciations = Jisho._getJishoPronouciations(word_data)
                 result[i]['ExtraPronounciations'] += "<br />"
                 result[i]['ExtraPronounciations'] += "//".join(pronounciations)
@@ -91,7 +92,7 @@ class Jisho(object):
                 result[i]['ExtraMeanings'] += "//".join(definitions)
 
             elif current_word == word or Jisho.tryGetJishoField(word_data, 'reading') == word:
-                COUNTERS.increment("extra_polysemic")
+                Counters.increment("extra_polysemic")
                 result.append(Jisho._getJishoOfData(word_data))
                 words.append(current_word)
 

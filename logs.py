@@ -2,6 +2,7 @@
 from aqt import mw
 import codecs
 import datetime
+import math
 
 class Logs(object):
     def write(log, string):

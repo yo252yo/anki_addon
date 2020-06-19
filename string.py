@@ -1,4 +1,5 @@
 import re
+from .counters import Counters
 
 class String(object):
     def kanjify(text):
@@ -23,6 +24,6 @@ class String(object):
             if (len(subword) >= 2 and not subword in result):
               result.add(subword)
 
-      global COUNTERS
-      COUNTERS.increment("expanded", value=len(result)-1)
+
+      Counters.increment("expanded", value=len(result)-1)
       return result

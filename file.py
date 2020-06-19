@@ -37,7 +37,7 @@ class File(object):
         kanjis = {}
         sim = codecs.open('D:/Japanese/jap_anki/kanjis_old.txt', 'rb', 'utf-8')
         for kanji in sim:
-          kanji = handleWordEncoding(kanji)
+          kanji = File.handleWordEncoding(kanji)
           k = kanji[:1]
           d = kanji[4:]
           kanjis[k] = d
