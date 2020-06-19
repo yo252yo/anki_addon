@@ -53,8 +53,8 @@ class Dumps(object):
             card = mw.col.getCard(id)
             note = mw.col.getCard(id).note()
             if note["Kanji"] in ivls:
-                ivls[note["Kanji"]] += 0.3 * min(ivls[note["Kanji"]], card.ivl)
-                ivls[note["Kanji"]] = 0.3 * ivls[note["Kanji"]] + 0.3 * card.ivl
+                ivls[note["Kanji"]] += 0.45 * min(ivls[note["Kanji"]], card.ivl)
+                ivls[note["Kanji"]] = 0.2 * ivls[note["Kanji"]] + 0.2 * card.ivl
             else:
                 ivls[note["Kanji"]] = card.ivl
 
@@ -93,4 +93,10 @@ class Dumps(object):
             # create string using the japanese and english vocabCardJapanese vocabCardEnglish
             vocabNote = mw.col.getNote(nid)
             file.write(vocabNote['Writing'] + "\n")
+        file.close()
+
+    def dump_strings(filename, strs):
+        file = codecs.open(filename, 'wb', 'utf-8')
+        for s in strs :
+            file.write(s + "\n")
         file.close()

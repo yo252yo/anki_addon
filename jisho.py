@@ -17,9 +17,9 @@ class Jisho(object):
             return ""
 
     def _tryGetJishoWord(data):
-        result = Jisho.tryGetJishoField(data, 'word')
+        result = Jisho._tryGetJishoField(data, 'word')
         if result == "":
-            result = Jisho.tryGetJishoField(data, 'reading')
+            result = Jisho._tryGetJishoField(data, 'reading')
         return result
 
     def _getJishoPronouciations(word_data):

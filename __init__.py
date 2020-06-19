@@ -19,8 +19,7 @@ def doRoutine():
   mw.onSync()
   mw.progress.start(immediate=True)
   Counters.resetCounters()
-  Transformer.importInReview()
-  Transformer.importInNew()
+  Transformer.importInBothFiles()
   Anki.resetDecks()
   mw.progress.finish()
   mw.onSync()
@@ -34,7 +33,6 @@ def addActionMenu(text, function):
     mw.form.menuTools.addAction(action)
 
 addActionMenu("==> Do everything", doRoutine)
-addActionMenu("> Import in_review.txt", Transformer.importInReview)
-addActionMenu("> Import in_new.txt", Transformer.importInNew)
+addActionMenu("> Import files", Transformer.importInBothFiles)
 addActionMenu("> Reset decks", Anki.resetDecks)
 addActionMenu("> Force logging", doLogging)

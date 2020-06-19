@@ -8,6 +8,7 @@ from .readfile import ReadFile
 from .jisho import Jisho
 from .counters import Counters
 from .string import String
+from .dumps import Dumps
 
 class Transformer(object):
     def _makeDetailsString(word, kana):
@@ -25,7 +26,7 @@ class Transformer(object):
       if len(roots) > 0:
         for root in roots:
           details = details + "<br /> " + root + " " + roots[root]
-      return details.replace('\r\n','')
+      return details.replace('\r\n','').replace('\n','').replace('\t', '')
 
     def _makeTagsString(word, jisho, extra_tag=""):
       tagsString = 'AG2 ' + extra_tag + ' '
@@ -44,6 +45,7 @@ class Transformer(object):
     def _makeOutputFileFromWords(filename, words, extra_tag=""):
         Counters.increment("new", value=len(words))
         Counters.increment("new:" + filename, value=len(words))
+        Counters.increment("new_" + extra_tag, value=len(words))
 
         file = codecs.open('D:/Japanese/jap_anki/internal/' + filename, 'wb', 'utf-8')
 
@@ -115,6 +117,7 @@ class Transformer(object):
 
         words_to_add = set()
         jisho_failures = set()
+        deletions = set()
 
         for word in words:
             Counters.increment("in_new_processed")
@@ -143,8 +146,10 @@ class Transformer(object):
                 else:
                     Counters.increment("in_new_renew")
                     Anki.deleteCard(card)
+                    deletions.add(word + str(len(card['cid'])))
                     words_to_add.add(real_word)
 
+            Dumps.dump_strings("D:/Japanese/jap_anki/internal/.deletions.txt", deletions)
             return (words_to_add, jisho_failures)
 
     def _processInReview(filename):
@@ -161,6 +166,15 @@ class Transformer(object):
                 Anki.rescheduleCard(card)
                 Counters.increment("in_review_resched")
             else:
+                # Resched our best guess
+                real_word = Jisho.getJisho(original_word)[0]
+                if real_word:
+                    card = Anki.getCardForWord(real_word['word'])
+                    if card:
+                        Anki.rescheduleCard(card)
+                        Counters.increment("in_review_resched")
+
+                # Expand word
                 words_expanded = String.expandToSubwords(original_word)
                 for word in words_expanded:
                     card = Anki.getCardForWord(word)
@@ -179,10 +193,11 @@ class Transformer(object):
         Transformer._overwriteInputFile(input_file_name, jisho_failures)
         Counters.increment("in_new_jisho_failures", value=len(jisho_failures))
 
-    def importInNew():
-        (words_to_add, jisho_failures) = Transformer._processInNew('in_new.txt')
-        Transformer._importWords('in_new.txt', 'output_in_new.txt', words_to_add, jisho_failures)
+    def importInBothFiles():
+        (words_to_add_new, jisho_failures_new) = Transformer._processInNew('in_new.txt')
+        Transformer._importWords('in_new.txt', 'output_in_new.txt', words_to_add_new, jisho_failures_new)
+        (words_to_add_review, jisho_failures_review) = Transformer._processInReview('in_review.txt')
+        Transformer._importWords('in_review.txt', 'output_in_review.txt', words_to_add_review, jisho_failures_review)
 
-    def importInReview():
-        (words_to_add, jisho_failures) = Transformer._processInReview('in_review.txt')
-        Transformer._importWords('in_review.txt', 'output_in_review.txt', words_to_add, jisho_failures)
+        intersection = list(set(words_to_add_new) & set(words_to_add_review))
+        Counters.increment("in_both_files", value=len(intersection))
