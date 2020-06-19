@@ -3,7 +3,6 @@ import codecs
 import datetime
 from aqt.utils import showInfo
 
-
 class Counters:
     _COUNTERS = {}
 
@@ -27,12 +26,10 @@ class Counters:
     def resetCounters():
         Counters._COUNTERS = {}
 
-    def printCounters():
-
-        log = codecs.open('D:/Japanese/jap_anki/logs/log.txt', 'a', 'utf-8')
+    def log(filename):
+        log = codecs.open(filename, 'a', 'utf-8')
         date = datetime.datetime.today().strftime('%Y-%m-%d')
         log.write(str(date) + "\t")
-
         log.write("0\t")
         log.write(Counters.get("expanded") + "\t")
         log.write(Counters.get("new") + "\t")
@@ -47,9 +44,12 @@ class Counters:
         log.write(Counters.get("in_review_resched") + "\t")
         log.write(Counters.get("kanjis") + "\t")
         log.write(Counters.get("extra_polysemic") + "\t")
-
         log.write("\r\n")
         log.close()
-        showInfo("counters:\n" + Counters.printAll())
+
+    def show():
+        showInfo("counters:\r\n" + Counters.printAll())
+
+    def sanityCheck():
         if (Counters.get("dupe_cleaned") != Counters.get("new")):
             showInfo("SUSPICIOUS BEHAVIOUR IN COUNTERS, new != clean. Do check:/n" + Counters.printAll())

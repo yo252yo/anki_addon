@@ -21,7 +21,9 @@ def doRoutine():
   Anki.resetDecks()
   mw.progress.finish()
   mw.onSync()
-  Counters.printCounters()
+  Counters.log('D:/Japanese/jap_anki/logs/log.txt')
+  Counters.show()
+  Counters.sanityCheck()
 
 def addActionMenu(text, function):
     action = QAction(text, mw)
