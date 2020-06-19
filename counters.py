@@ -16,7 +16,7 @@ class Counters:
 
     def printAll():
         str = " "
-        for key in Counters._COUNTERS:
+        for key in sorted(Counters._COUNTERS):
             str += key + ":" + Counters.get(key) + "\n"
         return str
 
