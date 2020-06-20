@@ -11,7 +11,7 @@ Counters.resetCounters()
 
 def doLogging():
     Dumps.logStats('D:/Japanese/jap_anki/logs/log_counts.txt')
-    Dumps.logKanjis('D:/Japanese/jap_anki/dumps/kanjis_ivl.txt')
+    Dumps.logKanjis('D:/Japanese/jap_anki/dumps/anki_kanjis_ivl.txt')
     Dumps.logCounters('D:/Japanese/jap_anki/logs/log.txt')
 
 
