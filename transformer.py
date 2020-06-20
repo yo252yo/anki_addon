@@ -126,6 +126,7 @@ class Transformer(object):
 
                 if card:
                     Anki.rescheduleCard(card)
+                    Counters.increment("in_new_reschedfail")
                     jisho_failures.add(word + "*")
                 else:
                     jisho_failures.add(word)
