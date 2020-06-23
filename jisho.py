@@ -61,7 +61,10 @@ class Jisho(object):
         jisho['ExtraMeanings'] = "//".join(definitions)
 
         jisho['tags'] = set().union(word_data['tags'], word_data['senses'][0]['tags'])
-        jisho['is_common'] = word_data['is_common']
+        if('is_common' in word_data):
+            jisho['is_common'] = word_data['is_common']
+        else:
+            jisho['is_common'] = False
 
         return jisho
 
