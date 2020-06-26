@@ -149,8 +149,8 @@ class Transformer(object):
                     deletions.add(word + str(len(card['cid'])))
                     words_to_add.add(real_word)
 
-            Dumps.dump_strings("D:/Japanese/jap_anki/internal/.deletions.txt", deletions)
-            return (words_to_add, jisho_failures)
+        Dumps.dump_strings("D:/Japanese/jap_anki/internal/.deletions.txt", deletions)
+        return (words_to_add, jisho_failures)
 
     def _processInReview(filename):
         words = ReadFile.fileToRawWords(filename)
