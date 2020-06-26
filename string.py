@@ -5,8 +5,10 @@ class String(object):
     def kanjify(text):
       hiragana = u'[ぁ-ゟ]'
       katakana = u'[゠-ヿ]'
+      misc = u'[\)\(]'
       output = re.sub(hiragana, '', text)
       output = re.sub(katakana, '', output)
+      output = re.sub(misc, '', output)
       #output = unicode(output)
       return output
 
