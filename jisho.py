@@ -61,10 +61,10 @@ class Jisho(object):
             definitions.remove(definition)
         except:
             print("not supposed to happen but no biggie")
-    if definitions:
-        jisho['ExtraMeanings'] = "//".join(definitions)
-    else:
-        jisho['ExtraMeanings'] = "."
+        if definitions:
+            jisho['ExtraMeanings'] = "//".join(definitions)
+        else:
+            jisho['ExtraMeanings'] = "."
 
         jisho['tags'] = set().union(word_data['tags'], word_data['senses'][0]['tags'])
         if('is_common' in word_data):
