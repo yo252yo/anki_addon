@@ -83,8 +83,9 @@ class Anki(object):
                 roots[subword] = (roots[subword])[0:limitsize] + "..."
       return roots
 
-    def cleanupDuplicates():
+    def cleanupDuplicates(filename):
         ids = mw.col.findNotes("(mid:1432900443242 -Details:*$* -Details:) or (mid:1432882338168 $)")
         Counters.increment("dupe_cleaned", value=len(ids))
-        Dumps.dump_ids('D:/Japanese/jap_anki/internal/.cleanups.txt', ids)
+        Counters.increment("dupe_cleaned_"+filename, value=len(ids))
+        Dumps.dump_ids('D:/Japanese/jap_anki/internal/.cleanups.'+filename+'.txt', ids)
         mw.col.remNotes(ids)

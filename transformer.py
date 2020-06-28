@@ -97,7 +97,7 @@ class Transformer(object):
             i = 1
         time.sleep(1)
         mw.reset()
-        Anki.cleanupDuplicates()
+        Anki.cleanupDuplicates(filename)
 
     def _overwriteInputFile(filename, words):
         overwritten_file = 'D:/Japanese/jap_anki/' + filename
