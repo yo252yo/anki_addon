@@ -6,11 +6,14 @@ import time
 from .anki import Anki
 from .readfile import ReadFile
 from .jisho import Jisho
+from aqt.utils import showInfo
 from .counters import Counters
 from .string import String
 from .dumps import Dumps
 
 class Transformer(object):
+    VERBOSE = False
+
     def _makeDetailsString(word, kana):
       kanjis = ReadFile.getKanjisDict()
       details = ""
@@ -158,6 +161,7 @@ class Transformer(object):
         words_to_add = set()
 
         for original_word in words:
+            showInfo(original_word)
             Counters.increment("in_review_processed")
             if Anki.rescheduleIfKanjis(original_word):
                 continue
@@ -177,6 +181,7 @@ class Transformer(object):
                 # Expand word
                 words_expanded = String.expandToSubwords(original_word)
                 for word in words_expanded:
+                    showInfo(word)
                     card = Anki.getCardForWord(word)
                     if not card:
                         jisho = Jisho.getJisho(word)[0]
@@ -189,14 +194,22 @@ class Transformer(object):
 
     def _importWords(input_file_name, output_file_name, words_to_add, jisho_failures):
         Transformer._makeOutputFileFromWords(output_file_name, words_to_add, extra_tag="auto_freq")
+        if Transformer.VERBOSE:
+            showInfo("Output made")
         Transformer._importOutputFileToDeck(output_file_name)
+        if Transformer.VERBOSE:
+            showInfo("Output imported")
         Transformer._overwriteInputFile(input_file_name, jisho_failures)
         Counters.increment("in_new_jisho_failures", value=len(jisho_failures))
 
     def importInBothFiles():
         (words_to_add_new, jisho_failures_new) = Transformer._processInNew('in_new.txt')
+        if Transformer.VERBOSE:
+            showInfo("Transformed in_new")
         Transformer._importWords('in_new.txt', 'output_in_new.txt', words_to_add_new, jisho_failures_new)
         (words_to_add_review, jisho_failures_review) = Transformer._processInReview('in_review.txt')
+        if Transformer.VERBOSE:
+            showInfo("Transformed in_review")
         Transformer._importWords('in_review.txt', 'output_in_review.txt', words_to_add_review, jisho_failures_review)
 
         intersection = list(set(words_to_add_new) & set(words_to_add_review))

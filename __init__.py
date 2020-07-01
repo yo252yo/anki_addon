@@ -29,6 +29,7 @@ def doRoutine():
   Counters.sanityCheck()
 
 def doRoutineVerbose():
+    Transformer.VERBOSE = True
     showInfo("Sync")
     mw.onSync()
     showInfo("Counters")
