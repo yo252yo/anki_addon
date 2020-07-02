@@ -17,13 +17,11 @@ def doLogging():
 
 
 def doRoutine():
-  mw.onSync()
   mw.progress.start(immediate=True)
   Counters.resetCounters()
   Transformer.importInBothFiles()
   Anki.resetDecks()
   mw.progress.finish()
-  mw.onSync()
   doLogging()
   Counters.show()
   Counters.sanityCheck()

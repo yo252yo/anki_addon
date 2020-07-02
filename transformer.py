@@ -161,7 +161,6 @@ class Transformer(object):
         words_to_add = set()
 
         for original_word in words:
-            showInfo(original_word)
             Counters.increment("in_review_processed")
             if Anki.rescheduleIfKanjis(original_word):
                 continue
@@ -181,7 +180,6 @@ class Transformer(object):
                 # Expand word
                 words_expanded = String.expandToSubwords(original_word)
                 for word in words_expanded:
-                    showInfo(word)
                     card = Anki.getCardForWord(word)
                     if not card:
                         jisho = Jisho.getJisho(word)[0]
