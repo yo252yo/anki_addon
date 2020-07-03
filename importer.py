@@ -4,6 +4,7 @@ import codecs
 import shutil
 import time
 from .anki import Anki
+from .cardmaker import CardMaker
 from .readfile import ReadFile
 from .jisho import Jisho
 from aqt.utils import showInfo
@@ -11,39 +12,8 @@ from .counters import Counters
 from .string import String
 from .dumps import Dumps
 
-class Transformer(object):
+class Importer(object):
     VERBOSE = False
-
-    def _makeDetailsString(word, kana):
-      kanjis = ReadFile.getKanjisDict()
-      details = ""
-      for k in word:
-        try:
-          details = details + k + " - " + kanjis[k] + "<br />"
-        except:
-          if kana:
-            details = details + ".<br />"
-          else:
-            details = details + "$<br />"
-      roots = Anki.findRootWords(word)
-      if len(roots) > 0:
-        for root in roots:
-          details = details + "<br /> " + root + " " + roots[root]
-      return details.replace('\r\n','').replace('\n','').replace('\t', '')
-
-    def _makeTagsString(word, jisho, extra_tag=""):
-      tagsString = 'AG2 ' + extra_tag + ' '
-      tagsString += 'kanji' + str(String.countKanjis(word)) + ' '
-      if jisho['is_common']:
-        tagsString = tagsString + 'COMMON '
-      if len(Anki.findRootWords(word)) > 0:
-        tagsString = tagsString + 'auto_compound '
-      for tag in jisho['tags']:
-        if "kana alone" in tag.lower():
-          tagsString = tagsString + 'KANA '
-        if "onomato" in tag.lower():
-          tagsString = tagsString + 'ONOM '
-      return tagsString
 
     def _makeOutputFileFromWords(filename, words, extra_tag=""):
         file = codecs.open('D:/Japanese/jap_anki/internal/' + filename, 'wb', 'utf-8')
@@ -64,12 +34,12 @@ class Transformer(object):
               else:
                 file.write(jisho['word'].replace("\t", "") + '\t')
               file.write(jisho['pronunciation'].replace("\t", "") + '\t')
-              file.write(Transformer._makeDetailsString(jisho['word'], is_kana).replace("\t", "") + '\t')
+              file.write(CardMaker.makeDetailsString(jisho['word'], is_kana).replace("\t", "") + '\t')
 
               file.write(jisho['ExtraPronounciations'].replace("\t", "") + '\t')
               file.write(jisho['ExtraMeanings'].replace("\t", "") + '\t')
 
-              file.write(Transformer._makeTagsString(jisho['word'], jisho, extra_tag).replace("\t", ""))
+              file.write(CardMaker.makeTagsString(jisho['word'], jisho, extra_tag).replace("\t", ""))
               file.write('\r\n')
 
         file.close()
@@ -93,8 +63,8 @@ class Transformer(object):
     def _importOutputFileToDeck(filename):
         file = ("D:/Japanese/jap_anki/internal/" + filename)
         try:
-            Transformer._importFileToCards(file, "Vocabulary cant write")
-            Transformer._importFileToCards(file, "Vocabulary")
+            Importer._importFileToCards(file, "Vocabulary cant write")
+            Importer._importFileToCards(file, "Vocabulary")
         except:
             # "Error in import of .output to deck, probably because it doesn't have new words."
             i = 1
@@ -191,32 +161,24 @@ class Transformer(object):
         return (words_to_add, [])
 
     def _importWords(input_file_name, output_file_name, words_to_add, jisho_failures):
-        Transformer._makeOutputFileFromWords(output_file_name, words_to_add, extra_tag="auto_freq")
-        if Transformer.VERBOSE:
+        Importer._makeOutputFileFromWords(output_file_name, words_to_add, extra_tag="auto_freq")
+        if Importer.VERBOSE:
             showInfo("Output made")
-        Transformer._importOutputFileToDeck(output_file_name)
-        if Transformer.VERBOSE:
+        Importer._importOutputFileToDeck(output_file_name)
+        if Importer.VERBOSE:
             showInfo("Output imported")
-        Transformer._overwriteInputFile(input_file_name, jisho_failures)
+        Importer._overwriteInputFile(input_file_name, jisho_failures)
         Counters.increment("in_new_jisho_failures", value=len(jisho_failures))
 
     def importInBothFiles():
-        (words_to_add_new, jisho_failures_new) = Transformer._processInNew('in_new.txt')
-        if Transformer.VERBOSE:
+        (words_to_add_new, jisho_failures_new) = Importer._processInNew('in_new.txt')
+        if Importer.VERBOSE:
             showInfo("Transformed in_new")
-        Transformer._importWords('in_new.txt', 'output_in_new.txt', words_to_add_new, jisho_failures_new)
-        (words_to_add_review, jisho_failures_review) = Transformer._processInReview('in_review.txt')
-        if Transformer.VERBOSE:
+        Importer._importWords('in_new.txt', 'output_in_new.txt', words_to_add_new, jisho_failures_new)
+        (words_to_add_review, jisho_failures_review) = Importer._processInReview('in_review.txt')
+        if Importer.VERBOSE:
             showInfo("Transformed in_review")
-        Transformer._importWords('in_review.txt', 'output_in_review.txt', words_to_add_review, jisho_failures_review)
+        Importer._importWords('in_review.txt', 'output_in_review.txt', words_to_add_review, jisho_failures_review)
 
         intersection = list(set(words_to_add_new) & set(words_to_add_review))
         Counters.increment("in_both_files", value=len(intersection))
-
-    def updateDetails():
-        cards = mw.col.findNotes("note:ProperNoun Details:")
-        for cid in cards:
-            note = mw.col.getNote(cid)
-            # We may need to replace False by is_kana from jisho if we expand this out of proper nouns
-            note["Details"] = Transformer._makeDetailsString(note["ProperNoun"], False)
-            note.flush()

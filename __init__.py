@@ -6,7 +6,8 @@ from aqt.utils import showInfo
 from .dumps import Dumps
 from .anki import Anki
 from .counters import Counters
-from .transformer import Transformer
+from .cardmaker import CardMaker
+from .importer import Importer
 
 Counters.resetCounters()
 
@@ -19,24 +20,21 @@ def doLogging():
 def doRoutine():
   mw.progress.start(immediate=True)
   Counters.resetCounters()
-  Transformer.importInBothFiles()
+  Importer.importInBothFiles()
   Anki.resetDecks()
   mw.progress.finish()
   doLogging()
   Counters.show()
   Counters.sanityCheck()
 
-def updateDetails():
-  Transformer.updateDetails()
-
 def doRoutineVerbose():
-    Transformer.VERBOSE = True
+    Importer.VERBOSE = True
     showInfo("Sync")
     mw.onSync()
     showInfo("Counters")
     Counters.resetCounters()
     showInfo("Import")
-    Transformer.importInBothFiles()
+    Importer.importInBothFiles()
     showInfo("Reset decks")
     Anki.resetDecks()
     showInfo("Sync2")
@@ -53,7 +51,7 @@ def addActionMenu(text, function):
 
 addActionMenu("==> Do everything", doRoutine)
 addActionMenu("==> Do everything (verbose)", doRoutineVerbose)
-addActionMenu("> Import files", Transformer.importInBothFiles)
+addActionMenu("> Import files", Importer.importInBothFiles)
 addActionMenu("> Reset decks", Anki.resetDecks)
 addActionMenu("> Force logging", doLogging)
-addActionMenu("==> Update Details", updateDetails)
+addActionMenu("==> Update Propernouns Details", CardMaker.updateDetailsOfProperNouns)
