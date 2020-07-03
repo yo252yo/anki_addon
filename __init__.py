@@ -26,6 +26,9 @@ def doRoutine():
   Counters.show()
   Counters.sanityCheck()
 
+def updateDetails():
+  Transformer.updateDetails()
+
 def doRoutineVerbose():
     Transformer.VERBOSE = True
     showInfo("Sync")
@@ -53,3 +56,4 @@ addActionMenu("==> Do everything (verbose)", doRoutineVerbose)
 addActionMenu("> Import files", Transformer.importInBothFiles)
 addActionMenu("> Reset decks", Anki.resetDecks)
 addActionMenu("> Force logging", doLogging)
+addActionMenu("==> Update Details", updateDetails)

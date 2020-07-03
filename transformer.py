@@ -212,3 +212,11 @@ class Transformer(object):
 
         intersection = list(set(words_to_add_new) & set(words_to_add_review))
         Counters.increment("in_both_files", value=len(intersection))
+
+    def updateDetails():
+        cards = mw.col.findNotes("note:ProperNoun Details:")
+        for cid in cards:
+            note = mw.col.getNote(cid)
+            # We may need to replace False by is_kana from jisho if we expand this out of proper nouns
+            note["Details"] = Transformer._makeDetailsString(note["ProperNoun"], False)
+            note.flush()
