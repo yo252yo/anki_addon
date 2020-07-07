@@ -2,6 +2,7 @@ from aqt import mw
 from .anki import Anki
 from .readfile import ReadFile
 from .string import String
+from aqt.utils import showInfo
 
 class CardMaker(object):
     def makeDetailsString(word, kana):
@@ -42,3 +43,4 @@ class CardMaker(object):
             # We may need to replace False by is_kana from jisho if we expand this out of proper nouns
             note["Details"] = CardMaker.makeDetailsString(note["ProperNoun"], False)
             note.flush()
+        showInfo("Updated cards:" + str(len(cards)))
