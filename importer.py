@@ -28,11 +28,11 @@ class Importer(object):
                 if "kana alone" in tag.lower():
                   is_kana = True
 
-              file.write(jisho['definition'].replace("\t", "") + '\t')
               if is_kana:
                 file.write(jisho['word'].replace("\t", "") + "<br />" + jisho['pronunciation'].replace("\t", "") + '\t')
               else:
                 file.write(jisho['word'].replace("\t", "") + '\t')
+              file.write(jisho['definition'].replace("\t", "") + '\t')
               file.write(jisho['pronunciation'].replace("\t", "") + '\t')
               file.write(CardMaker.makeDetailsString(jisho['word'], is_kana).replace("\t", "") + '\t')
 
