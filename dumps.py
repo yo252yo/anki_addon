@@ -53,8 +53,10 @@ class Dumps(object):
             card = mw.col.getCard(id)
             note = mw.col.getCard(id).note()
             if note["Kanji"] in ivls:
-                ivls[note["Kanji"]] += 0.45 * min(ivls[note["Kanji"]], card.ivl)
-                ivls[note["Kanji"]] = 0.2 * ivls[note["Kanji"]] + 0.2 * card.ivl
+                reverseivl = ivls[note["Kanji"]]
+                m = min(reverseivl, card.ivl)
+                avg_ivl += (2 * m + reverseivl + card.ivl) / 4
+                ivls[note["Kanji"]] = math.min(3*m, avg_ivl)
             else:
                 ivls[note["Kanji"]] = card.ivl
 
