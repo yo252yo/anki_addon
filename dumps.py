@@ -55,8 +55,8 @@ class Dumps(object):
             if note["Kanji"] in ivls:
                 reverseivl = ivls[note["Kanji"]]
                 m = min(reverseivl, card.ivl)
-                avg_ivl += (2 * m + reverseivl + card.ivl) / 4
-                ivls[note["Kanji"]] = math.min(3*m, avg_ivl)
+                avg_ivl = (2 * m + reverseivl + card.ivl) / 4
+                ivls[note["Kanji"]] = min(3*m, avg_ivl)
             else:
                 ivls[note["Kanji"]] = card.ivl
 
