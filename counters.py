@@ -34,6 +34,6 @@ class Counters:
         showInfo("counters:\r\n" + Counters.printAll())
 
     def sanityCheck():
-        if (int(Counters.get("dupe_cleaned")) != (2*int(Counters.get("new")) - 2*int(Counters.get("in_both_files")))):
+        if (int(Counters.get("dupe_cleaned")) != (2*int(Counters.get("new")))):
             showInfo("SUSPICIOUS BEHAVIOUR IN COUNTERS, new != clean. Do check.")
             showInfo(Counters.printAll())
