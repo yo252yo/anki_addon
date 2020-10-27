@@ -125,19 +125,19 @@ class Importer(object):
         Dumps.dump_strings("D:/Japanese/jap_anki/internal/.deletions.txt", deletions)
         return (words_to_add, jisho_failures)
 
-    def _processInReview(filename):
-        words = ReadFile.fileToRawWords(filename)
+    def _processInReview(name):
+        words = ReadFile.fileToRawWords(name + '.txt')
 
         words_to_add = set()
 
         for original_word in words:
-            Counters.increment("in_review_processed")
+            Counters.increment(name + "_processed")
             if Anki.rescheduleIfKanjis(original_word):
                 continue
             card = Anki.getCardForWord(original_word)
             if card:
                 Anki.rescheduleCard(card)
-                Counters.increment("in_review_resched")
+                Counters.increment(name + "_resched")
             else:
                 # Resched our best guess
                 real_word = Jisho.getJisho(original_word)[0]
@@ -145,7 +145,7 @@ class Importer(object):
                     card = Anki.getCardForWord(real_word['word'])
                     if card:
                         Anki.rescheduleCard(card)
-                        Counters.increment("in_review_resched")
+                        Counters.increment(name + "_resched")
 
                 # Expand word
                 words_expanded = String.expandToSubwords(original_word)
@@ -156,7 +156,7 @@ class Importer(object):
                         if jisho:
                             card = Anki.getCardForWord(jisho['word'])
                             if not card:
-                                Counters.increment("in_review_new")
+                                Counters.increment(name + "_new")
                                 words_to_add.add(jisho['word'])
         return (words_to_add, [])
 
@@ -175,10 +175,16 @@ class Importer(object):
         if Importer.VERBOSE:
             showInfo("Transformed in_new")
         Importer._importWords('in_new.txt', 'output_in_new.txt', words_to_add_new, jisho_failures_new)
-        (words_to_add_review, jisho_failures_review) = Importer._processInReview('in_review.txt')
+
+        (words_to_add_review, jisho_failures_review) = Importer._processInReview('in_review')
         if Importer.VERBOSE:
             showInfo("Transformed in_review")
         Importer._importWords('in_review.txt', 'output_in_review.txt', words_to_add_review, jisho_failures_review)
+
+        (words_to_add_async, jisho_failures_async) = Importer._processInReview('in_async')
+        if Importer.VERBOSE:
+            showInfo("Transformed in_async")
+        Importer._importWords('in_async.txt', 'output_in_async.txt', words_to_add_async, jisho_failures_async)
 
         intersection = list(set(words_to_add_new) & set(words_to_add_review))
         Counters.increment("in_both_files", value=len(intersection))
