@@ -44,16 +44,22 @@ def doRoutineVerbose():
     Counters.show()
     Counters.sanityCheck()
 
-def addActionMenu(text, function):
+def addActionMenu(text, function, menu=mw.form.menuTools):
     action = QAction(text, mw)
     action.triggered.connect(function)
-    mw.form.menuTools.addAction(action)
+    menu.addAction(action)
 
-addActionMenu("==> Do everything", doRoutine)
-addActionMenu("==> Do everything (verbose)", doRoutineVerbose)
-addActionMenu("> Import files", Importer.importInBothFiles)
-addActionMenu("> Reset decks", Anki.resetDecks)
-addActionMenu("> Force logging", doLogging)
-addActionMenu("> Sync", mw.onSync)
-addActionMenu("==> Update Propernouns Details", CardMaker.updateDetailsOfProperNouns)
-addActionMenu("> Force update Propernouns Details", CardMaker.forceUpdateDetailsOfProperNouns)
+
+debugMenu = QMenu('Debug', mw)
+mw.form.menuTools.addMenu(debugMenu)
+
+addActionMenu("=> Import new/review/async", doRoutine)
+addActionMenu("=> Update Propernouns Details", CardMaker.updateDetailsOfProperNouns)
+
+addActionMenu("=>Full routine (verbose)", doRoutineVerbose, debugMenu)
+addActionMenu("Import files", Importer.importInBothFiles, debugMenu)
+addActionMenu("Reset decks", Anki.resetDecks)
+addActionMenu("Force logging", doLogging, debugMenu)
+addActionMenu("Sync", mw.onSync, debugMenu)
+debugMenu.addSeparator()
+addActionMenu("Force update ALL Propernouns Details", CardMaker.forceUpdateDetailsOfProperNouns, debugMenu)
