@@ -1,4 +1,5 @@
 import codecs
+import csv
 
 class ReadFile(object):
     def _handleWordEncoding(word):
@@ -18,26 +19,21 @@ class ReadFile(object):
                 words.add(word)
         return words
 
-    #def getKanjisDict():
-    #    kanjis = {}
-    #    sim = codecs.open('D:/Japanese/jap_anki/dumps/kanjis_details.txt', 'rb', 'utf-8')
-    #    cr = csv.reader(sim)
-    #    for row in cr:
-    #      k = File._handleWordEncoding(row[0])
-    #      d = File._handleWordEncoding(row[2]) + " (" + File._handleWordEncoding(row[1]) + ")"
-    #      kanjis[k] = d
-    #    sim.close()
-    #    return kanjis
-
-
-    # OLD VERSION, REPLACE BY THE ABOVE
     def getKanjisDict():
         kanjis = {}
-        sim = codecs.open('D:/Japanese/jap_anki/dumps/kanjis_old.txt', 'rb', 'utf-8')
-        for kanji in sim:
-          kanji = ReadFile._handleWordEncoding(kanji)
-          k = kanji[:1]
-          d = kanji[4:]
+        sim = codecs.open('D:/Japanese/jap_anki/dumps/graph_kanjis_details.txt', 'rb', 'utf-8')
+        cr = csv.reader(sim)
+        for row in cr:
+          k = ReadFile._handleWordEncoding(row[0])
+          d = ReadFile._handleWordEncoding(row[2]) + " (" + ReadFile._handleWordEncoding(row[1]) + ")"
           kanjis[k] = d
         sim.close()
+
+        kanas = codecs.open('D:/Japanese/jap_anki/internal/kanas.txt', 'rb', 'utf-8')
+        for kana in kanas:
+          kana = ReadFile._handleWordEncoding(kana)
+          k = kana[:1]
+          d = kana[4:]
+          kanjis[k] = d
+
         return kanjis

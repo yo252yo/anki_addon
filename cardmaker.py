@@ -43,7 +43,7 @@ class CardMaker(object):
             # We may need to replace False by is_kana from jisho if we expand this out of proper nouns
             note["Details"] = CardMaker.makeDetailsString(note["ProperNoun"], False)
             note.flush()
-        #showInfo("Updated cards:" + str(len(cards)))
+        showInfo("Updated cards:" + str(len(cards)))
 
     def forceUpdateDetailsOfProperNouns():
         cards = mw.col.findNotes("note:ProperNoun")
