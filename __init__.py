@@ -19,9 +19,12 @@ def doLogging():
 
 def doRoutine():
   mw.progress.start(immediate=True)
+  mw.onSync()
+  CardMaker.updateDetailsOfProperNouns()
   Counters.resetCounters()
   Importer.importInBothFiles()
   Anki.resetDecks()
+  mw.onSync()
   mw.progress.finish()
   doLogging()
   Counters.show()
@@ -31,6 +34,8 @@ def doRoutineVerbose():
     Importer.VERBOSE = True
     showInfo("Sync")
     mw.onSync()
+    showInfo("Proper nouns details")
+    CardMaker.updateDetailsOfProperNouns()
     showInfo("Counters")
     Counters.resetCounters()
     showInfo("Import")
@@ -53,10 +58,10 @@ def addActionMenu(text, function, menu=mw.form.menuTools):
 debugMenu = QMenu('Debug', mw)
 mw.form.menuTools.addMenu(debugMenu)
 
-addActionMenu("=> Import new/review/async", doRoutine)
-addActionMenu("=> Update Propernouns Details", CardMaker.updateDetailsOfProperNouns)
+addActionMenu("=> Full routine", doRoutine)
 
-addActionMenu("=>Full routine (verbose)", doRoutineVerbose, debugMenu)
+addActionMenu("=> Full routine (verbose)", doRoutineVerbose, debugMenu)
+addActionMenu("Update Propernouns Details", CardMaker.updateDetailsOfProperNouns, debugMenu)
 addActionMenu("Import files", Importer.importInBothFiles, debugMenu)
 addActionMenu("Reset decks", Anki.resetDecks)
 addActionMenu("Force logging", doLogging, debugMenu)
