@@ -5,6 +5,8 @@ from .string import String
 from aqt.utils import showInfo
 
 class CardMaker(object):
+    VERBOSE = False
+
     def makeDetailsString(word, kana):
       kanjis = ReadFile.getKanjisDict()
       details = ""
@@ -43,7 +45,8 @@ class CardMaker(object):
             # We may need to replace False by is_kana from jisho if we expand this out of proper nouns
             note["Details"] = CardMaker.makeDetailsString(note["ProperNoun"], False)
             note.flush()
-        showInfo("Updated cards:" + str(len(cards)))
+        if Importer.VERBOSE:
+            showInfo("Updated cards:" + str(len(cards)))
 
     def forceUpdateDetailsOfProperNouns():
         cards = mw.col.findNotes("note:ProperNoun")

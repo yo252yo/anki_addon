@@ -32,6 +32,7 @@ def doRoutine():
 
 def doRoutineVerbose():
     Importer.VERBOSE = True
+    CardMaker.VERBOSE = True
     showInfo("Sync")
     mw.onSync()
     showInfo("Proper nouns details")
