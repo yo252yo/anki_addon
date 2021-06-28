@@ -3,6 +3,7 @@ import csv
 
 class ReadFile(object):
     kanjis = {}
+    lastKanji = ""
 
     def _handleWordEncoding(word):
       if word.startswith(u'\ufeff'):
@@ -38,6 +39,7 @@ class ReadFile(object):
           k = ReadFile._handleWordEncoding(row[0])
           d = ReadFile._handleWordEncoding(row[2]) + " (" + ReadFile._handleWordEncoding(row[1]) + ")"
           ReadFile.kanjis[k] = d
+          ReadFile.lastKanji = k
         sim.close()
 
         return ReadFile.kanjis
