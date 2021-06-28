@@ -68,12 +68,11 @@ class CardMaker(object):
         if CardMaker.VERBOSE:
             showInfo("Updated cards:" + str(len(cards)))
 
-
     def refreshAllDetails():
         CardMaker._refreshDetailsForSearch("-tag:" + CardMaker.VersionAD)
 
-    def forceUpdateDetailsOfProperNouns():
+    def updateDetailsOfProperNouns():
         CardMaker._refreshDetailsForSearch("note:ProperNoun")
 
-    def updateDetailsOfProperNouns():
-        CardMaker._refreshDetailsForSearch("note:ProperNoun Details:")
+    def populateMissingDeatils():
+        CardMaker._refreshDetailsForSearch("Details:")
