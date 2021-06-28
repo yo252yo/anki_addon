@@ -6,7 +6,8 @@ from aqt.utils import showInfo
 
 class CardMaker(object):
     VERBOSE = False
-    Version = "AG3"
+    VersionAG = "AG3"
+    VersionAD = "AD3"
 
     def makeDetailsString(word, kana):
       kanjis = ReadFile.getKanjisDict()
@@ -31,7 +32,7 @@ class CardMaker(object):
       return details.replace('\r\n','').replace('\n','').replace('\t', '')
 
     def makeTagsString(word, jisho, extra_tag=""):
-      tagsString = CardMaker.Version + ' ' + extra_tag + ' '
+      tagsString = CardMaker.VersionAG + ' ' + CardMaker.VersionAD + ' ' + extra_tag + ' '
       tagsString += 'kanji' + str(String.countKanjis(word)) + ' '
       if jisho['is_common']:
         tagsString = tagsString + 'COMMON '
@@ -52,7 +53,7 @@ class CardMaker(object):
         for cid in cards:
             try:
                 note = mw.col.getNote(cid)
-                note.tags.append(CardMaker.Version)
+                note.tags.append(CardMaker.VersionAD)
                 if "Details" in note:
                     word = ""
                     if "ProperNoun" in note:
@@ -69,7 +70,7 @@ class CardMaker(object):
 
 
     def refreshAllDetails():
-        CardMaker._refreshDetailsForSearch("-tag:" + CardMaker.Version)
+        CardMaker._refreshDetailsForSearch("-tag:" + CardMaker.VersionAD)
 
     def forceUpdateDetailsOfProperNouns():
         CardMaker._refreshDetailsForSearch("note:ProperNoun")
