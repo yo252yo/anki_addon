@@ -9,7 +9,6 @@ class CardMaker(object):
     VERBOSE = False
     VersionAG = "AG3"
     VersionAD = "AD4"
-    UPDATEBATCH = 1000
     html_re = re.compile(r'(<!--.*?-->|<[^>]*>)')
 
     def makeDetailsString(word, kana):
@@ -57,7 +56,7 @@ class CardMaker(object):
         cards = mw.col.findNotes(search)
         if CardMaker.VERBOSE:
             showInfo("Updating details for search:" + search)
-        i = 0
+
         for cid in cards:
             try:
                 note = mw.col.getNote(cid)
@@ -73,9 +72,7 @@ class CardMaker(object):
                     if word:
                         note["Details"] = CardMaker.makeDetailsString(word, ("KANA" in note.tags))
                 note.flush()
-                i = i+1
-                if i >= CardMaker.UPDATEBATCH:
-                    break
+
             except Exception as err:
                 showInfo("Failed:" + str(err))
         if CardMaker.VERBOSE:
