@@ -16,6 +16,7 @@ class CardMaker(object):
       details = ""
       for k in word:
         try:
+          k = k.lower()
           if (k == "\n") or (k == "\\") or (k == "/") or (k == "$"):
               continue
           if kanjis[k].strip()[0] == ".":
@@ -50,9 +51,9 @@ class CardMaker(object):
       return tagsString
 
     def sanitize(word):
-        raw = word.replace("&nbsp;", " ").replace("<br\s*?>", "$").replace("<div>", "$").replace("</div>", "").replace("$$", "$")
+        raw = word.replace("&nbsp;", " ").replace("<br\s*?>", "\n").replace("<div>", "\n").replace("</div>", "").replace("\n\n", "\n")
         no_tags = CardMaker.html_re.sub('', raw)
-        return no_tags.strip().replace("$", "<br />")
+        return no_tags.strip().replace("\n", "<br />")
 
     def _refreshDetailsForSearch(search):
         cards = mw.col.findNotes(search)
