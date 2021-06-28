@@ -2,6 +2,8 @@ import codecs
 import csv
 
 class ReadFile(object):
+    kanjis = {}
+
     def _handleWordEncoding(word):
       if word.startswith(u'\ufeff'):
         word = word[1:]
@@ -20,20 +22,22 @@ class ReadFile(object):
         return words
 
     def getKanjisDict():
-        kanjis = {}
-        sim = codecs.open('D:/Japanese/jap_anki/dumps/graph_kanjis_details.txt', 'rb', 'utf-8')
-        cr = csv.reader(sim)
-        for row in cr:
-          k = ReadFile._handleWordEncoding(row[0])
-          d = ReadFile._handleWordEncoding(row[2]) + " (" + ReadFile._handleWordEncoding(row[1]) + ")"
-          kanjis[k] = d
-        sim.close()
+        if len(ReadFile.kanjis.keys()) > 0:
+            return ReadFile.kanjis
 
         kanas = codecs.open('D:/Japanese/jap_anki/internal/kanas.txt', 'rb', 'utf-8')
         for kana in kanas:
           kana = ReadFile._handleWordEncoding(kana)
           k = kana[:1]
           d = kana[4:]
-          kanjis[k] = d
+          ReadFile.kanjis[k] = d
 
-        return kanjis
+        sim = codecs.open('D:/Japanese/jap_anki/dumps/graph_kanjis_details.txt', 'rb', 'utf-8')
+        cr = csv.reader(sim)
+        for row in cr:
+          k = ReadFile._handleWordEncoding(row[0])
+          d = ReadFile._handleWordEncoding(row[2]) + " (" + ReadFile._handleWordEncoding(row[1]) + ")"
+          ReadFile.kanjis[k] = d
+        sim.close()
+
+        return ReadFile.kanjis
