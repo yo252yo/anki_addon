@@ -10,6 +10,11 @@ class ReadFile(object):
         word = word[1:]
       return word
 
+    def getLastKanji():
+        if not ReadFile.lastKanji:
+            ReadFile.getKanjisDict()
+        return ReadFile.lastKanji
+        
     def fileToRawWords(file):
         f = codecs.open('D:/Japanese/jap_anki/' + file, 'rb', 'utf-8')
         words = set()

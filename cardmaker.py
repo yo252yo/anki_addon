@@ -3,11 +3,14 @@ from .anki import Anki
 from .readfile import ReadFile
 from .string import String
 from aqt.utils import showInfo
+import re
 
 class CardMaker(object):
     VERBOSE = False
     VersionAG = "AG3"
-    VersionAD = "AD3"
+    VersionAD = "AD4"
+    UPDATEBATCH = 1000
+    html_re = re.compile(r'(<!--.*?-->|<[^>]*>)')
 
     def makeDetailsString(word, kana):
       kanjis = ReadFile.getKanjisDict()
@@ -45,6 +48,11 @@ class CardMaker(object):
           tagsString = tagsString + 'ONOM '
       return tagsString
 
+    def sanitize(word):
+        raw = word.replace("&nbsp;", " ").replace("<br\s*?>", "\n").replace("", "\n").replace("</div>", "\n")
+        no_tags = CardMaker.html_re.sub('', raw)
+        return no_tags.strip().replace("\n", "<br />")
+
     def _refreshDetailsForSearch(search):
         cards = mw.col.findNotes(search)
         if CardMaker.VERBOSE:
@@ -57,18 +65,23 @@ class CardMaker(object):
                 if "Details" in note:
                     word = ""
                     if "ProperNoun" in note:
+                        note["ProperNoun"] = CardMaker.sanitize(note["ProperNoun"])
                         word = note["ProperNoun"]
                     if "Writing" in note:
+                        note["Writing"] = CardMaker.sanitize(note["Writing"])
                         word = note["Writing"]
                     if word:
-                        note["Details"] = CardMaker.makeDetailsString(word, False)
+                        note["Details"] = CardMaker.makeDetailsString(word, ("KANA" in note.tags))
                 note.flush()
+                i = i+1
+                if i >= CardMaker.UPDATEBATCH:
+                    break
             except Exception as err:
                 showInfo("Failed:" + str(err))
         if CardMaker.VERBOSE:
             showInfo("Updated cards:" + str(len(cards)))
 
-    def refreshAllDetails():
+    def updateAllDetails():
         CardMaker._refreshDetailsForSearch("-tag:" + CardMaker.VersionAD)
 
     def updateDetailsOfProperNouns():
@@ -76,3 +89,6 @@ class CardMaker(object):
 
     def populateMissingDeatils():
         CardMaker._refreshDetailsForSearch("Details:")
+
+    def refreshDetailsForLastKanji():
+        CardMaker._refreshDetailsForSearch(ReadFile.getLastKanji())
