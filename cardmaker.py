@@ -8,7 +8,7 @@ import re
 class CardMaker(object):
     VERBOSE = False
     VersionAG = "AG3"
-    VersionAD = "AD4"
+    VersionAD = "AD5"
     html_re = re.compile(r'(<!--.*?-->|<[^>]*>)')
 
     def makeDetailsString(word, kana):
@@ -16,6 +16,8 @@ class CardMaker(object):
       details = ""
       for k in word:
         try:
+          if (k == "\n") or (k == "\\") or (k == "/") or (k == "$"):
+              continue
           if kanjis[k].strip()[0] == ".":
               continue #kanas, romaji, etc...
           details = details + k + " - " + kanjis[k] + "<br />"
@@ -48,9 +50,9 @@ class CardMaker(object):
       return tagsString
 
     def sanitize(word):
-        raw = word.replace("&nbsp;", " ").replace("<br\s*?>", "\n").replace("", "\n").replace("</div>", "\n")
+        raw = word.replace("&nbsp;", " ").replace("<br\s*?>", "$").replace("<div>", "$").replace("</div>", "").replace("$$", "$")
         no_tags = CardMaker.html_re.sub('', raw)
-        return no_tags.strip().replace("\n", "<br />")
+        return no_tags.strip().replace("$", "<br />")
 
     def _refreshDetailsForSearch(search):
         cards = mw.col.findNotes(search)
