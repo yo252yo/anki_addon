@@ -8,6 +8,7 @@ from .anki import Anki
 from .counters import Counters
 from .cardmaker import CardMaker
 from .studyImporter import StudyImporter
+from .kanjiImporter import KanjiImporter
 
 Counters.resetCounters()
 
@@ -22,6 +23,7 @@ def doRoutine():
   mw.onSync()
   Counters.resetCounters()
   StudyImporter.importInBothFiles()
+  KanjiImporter.importKanjis()
   Anki.resetDecks()
   CardMaker.updateAllDetails()
   CardMaker.refreshDetailsForLastKanji()
@@ -40,6 +42,8 @@ def doRoutineVerbose():
     Counters.resetCounters()
     showInfo("Import study files")
     StudyImporter.importInBothFiles()
+    showInfo("Import kanjis")
+    KanjiImporter.importKanjis()
     showInfo("Reset decks")
     Anki.resetDecks()
     showInfo("Update details")
@@ -67,6 +71,8 @@ addActionMenu("=> Full routine", doRoutine)
 addActionMenu("=> Full routine (verbose)", doRoutineVerbose, debugMenu)
 debugMenu.addSeparator()
 addActionMenu("Import study files", StudyImporter.importInBothFiles, debugMenu)
+addActionMenu("Import kanjis", KanjiImporter.importKanjis, debugMenu)
+debugMenu.addSeparator()
 addActionMenu("Reset decks", Anki.resetDecks)
 addActionMenu("Force logging", doLogging, debugMenu)
 addActionMenu("Sync", mw.onSync, debugMenu)
