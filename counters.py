@@ -35,5 +35,4 @@ class Counters:
 
     def sanityCheck():
         if (int(Counters.get("dupe_cleaned")) != (int(Counters.get("new")))):
-            showInfo("SUSPICIOUS BEHAVIOUR IN COUNTERS, new != clean. Do check.")
-            showInfo(Counters.printAll())
+            showInfo("SUSPICIOUS BEHAVIOUR IN COUNTERS, new != clean. Do check." + Counters.printAll())
