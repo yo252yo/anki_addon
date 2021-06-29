@@ -63,8 +63,8 @@ class StudyImporter(object):
     def _importOutputFileToDeck(filename):
         file = ("D:/Japanese/jap_anki/internal/" + filename)
         try:
-            Importer._importFileToCards(file, "Vocabulary cant write")
-            Importer._importFileToCards(file, "Vocabulary")
+            StudyImporter._importFileToCards(file, "Vocabulary cant write")
+            StudyImporter._importFileToCards(file, "Vocabulary")
         except:
             # "Error in import of .output to deck, probably because it doesn't have new words."
             i = 1
