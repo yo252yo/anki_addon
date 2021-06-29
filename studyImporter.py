@@ -12,7 +12,7 @@ from .counters import Counters
 from .string import String
 from .dumps import Dumps
 
-class Importer(object):
+class StudyImporter(object):
     VERBOSE = False
 
     def _makeOutputFileFromWords(filename, words, extra_tag=""):
@@ -161,30 +161,30 @@ class Importer(object):
         return (words_to_add, [])
 
     def _importWords(input_file_name, output_file_name, words_to_add, jisho_failures):
-        Importer._makeOutputFileFromWords(output_file_name, words_to_add, extra_tag="auto_freq")
-        if Importer.VERBOSE:
+        StudyImporter._makeOutputFileFromWords(output_file_name, words_to_add, extra_tag="auto_freq")
+        if StudyImporter.VERBOSE:
             showInfo("Output made")
-        Importer._importOutputFileToDeck(output_file_name)
-        if Importer.VERBOSE:
+        StudyImporter._importOutputFileToDeck(output_file_name)
+        if studyImporter.VERBOSE:
             showInfo("Output imported")
-        Importer._overwriteInputFile(input_file_name, jisho_failures)
+        StudyImporter._overwriteInputFile(input_file_name, jisho_failures)
         Counters.increment("in_new_jisho_failures", value=len(jisho_failures))
 
     def importInBothFiles():
-        (words_to_add_new, jisho_failures_new) = Importer._processInNew('in_new.txt')
+        (words_to_add_new, jisho_failures_new) = StudyImporter._processInNew('in_new.txt')
         if Importer.VERBOSE:
             showInfo("Transformed in_new")
-        Importer._importWords('in_new.txt', 'output_in_new.txt', words_to_add_new, jisho_failures_new)
+        StudyImporter._importWords('in_new.txt', 'output_in_new.txt', words_to_add_new, jisho_failures_new)
 
-        (words_to_add_review, jisho_failures_review) = Importer._processInReview('in_review')
-        if Importer.VERBOSE:
+        (words_to_add_review, jisho_failures_review) = StudyImporter._processInReview('in_review')
+        if StudyImporter.VERBOSE:
             showInfo("Transformed in_review")
-        Importer._importWords('in_review.txt', 'output_in_review.txt', words_to_add_review, jisho_failures_review)
+        StudyImporter._importWords('in_review.txt', 'output_in_review.txt', words_to_add_review, jisho_failures_review)
 
-        (words_to_add_async, jisho_failures_async) = Importer._processInReview('in_async')
-        if Importer.VERBOSE:
+        (words_to_add_async, jisho_failures_async) = StudyImporter._processInReview('in_async')
+        if StudyImporter.VERBOSE:
             showInfo("Transformed in_async")
-        Importer._importWords('in_async.txt', 'output_in_async.txt', words_to_add_async, jisho_failures_async)
+        StudyImporter._importWords('in_async.txt', 'output_in_async.txt', words_to_add_async, jisho_failures_async)
 
         intersection = list(set(words_to_add_new) & set(words_to_add_review))
         Counters.increment("in_both_files", value=len(intersection))

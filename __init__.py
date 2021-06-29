@@ -7,7 +7,7 @@ from .dumps import Dumps
 from .anki import Anki
 from .counters import Counters
 from .cardmaker import CardMaker
-from .importer import Importer
+from .studyImporter import StudyImporter
 
 Counters.resetCounters()
 
@@ -21,7 +21,7 @@ def doRoutine():
   mw.progress.start(immediate=True)
   mw.onSync()
   Counters.resetCounters()
-  Importer.importInBothFiles()
+  StudyImporter.importInBothFiles()
   Anki.resetDecks()
   CardMaker.updateAllDetails()
   CardMaker.refreshDetailsForLastKanji()
@@ -32,14 +32,14 @@ def doRoutine():
   Counters.sanityCheck()
 
 def doRoutineVerbose():
-    Importer.VERBOSE = True
+    StudyImporter.VERBOSE = True
     CardMaker.VERBOSE = True
     showInfo("Sync")
     mw.onSync()
     showInfo("Counters")
     Counters.resetCounters()
-    showInfo("Import")
-    Importer.importInBothFiles()
+    showInfo("Import study files")
+    StudyImporter.importInBothFiles()
     showInfo("Reset decks")
     Anki.resetDecks()
     showInfo("Update details")
@@ -66,7 +66,7 @@ addActionMenu("=> Full routine", doRoutine)
 
 addActionMenu("=> Full routine (verbose)", doRoutineVerbose, debugMenu)
 debugMenu.addSeparator()
-addActionMenu("Import files", Importer.importInBothFiles, debugMenu)
+addActionMenu("Import study files", StudyImporter.importInBothFiles, debugMenu)
 addActionMenu("Reset decks", Anki.resetDecks)
 addActionMenu("Force logging", doLogging, debugMenu)
 addActionMenu("Sync", mw.onSync, debugMenu)
