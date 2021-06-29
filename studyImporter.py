@@ -34,12 +34,12 @@ class StudyImporter(object):
                 file.write(jisho['word'].replace("\t", "") + '\t')
               file.write(jisho['definition'].replace("\t", "") + '\t')
               file.write(jisho['pronunciation'].replace("\t", "") + '\t')
-              file.write(CardMaker.makeDetailsString(jisho['word'], is_kana).replace("\t", "") + '\t')
+              file.write(CardMaker._makeDetailsString(jisho['word'], is_kana).replace("\t", "") + '\t')
 
               file.write(jisho['ExtraPronounciations'].replace("\t", "") + '\t')
               file.write(jisho['ExtraMeanings'].replace("\t", "") + '\t')
 
-              file.write(CardMaker.makeTagsString(jisho['word'], jisho, extra_tag).replace("\t", ""))
+              file.write(CardMaker._makeTagsString(jisho['word'], jisho, extra_tag).replace("\t", ""))
               file.write('\r\n')
 
         file.close()

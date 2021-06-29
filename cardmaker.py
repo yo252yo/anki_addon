@@ -11,7 +11,7 @@ class CardMaker(object):
     VersionAD = "AD5"
     html_re = re.compile(r'(<!--.*?-->|<[^>]*>)')
 
-    def makeDetailsString(word, kana):
+    def _makeDetailsString(word, kana):
       kanjis = ReadFile.getKanjisDict()
       details = ""
       for k in word:
@@ -36,7 +36,7 @@ class CardMaker(object):
               details = details + "<br /> " + root + " " + roots[root]
       return details.replace('\r\n','').replace('\n','').replace('\t', '')
 
-    def makeTagsString(word, jisho, extra_tag=""):
+    def _makeTagsString(word, jisho, extra_tag=""):
       tagsString = CardMaker.VersionAG + ' ' + CardMaker.VersionAD + ' ' + extra_tag + ' '
       tagsString += 'kanji' + str(String.countKanjis(word)) + ' '
       if jisho['is_common']:
@@ -73,7 +73,7 @@ class CardMaker(object):
                         note["Writing"] = CardMaker.sanitize(note["Writing"])
                         word = note["Writing"]
                     if word:
-                        note["Details"] = CardMaker.makeDetailsString(word, ("KANA" in note.tags))
+                        note["Details"] = CardMaker._makeDetailsString(word, ("KANA" in note.tags))
                 note.flush()
 
             except Exception as err:
