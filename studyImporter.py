@@ -165,7 +165,7 @@ class StudyImporter(object):
         if StudyImporter.VERBOSE:
             showInfo("Output made")
         StudyImporter._importOutputFileToDeck(output_file_name)
-        if studyImporter.VERBOSE:
+        if StudyImporter.VERBOSE:
             showInfo("Output imported")
         StudyImporter._overwriteInputFile(input_file_name, jisho_failures)
         Counters.increment("in_new_jisho_failures", value=len(jisho_failures))
