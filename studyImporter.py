@@ -172,7 +172,7 @@ class StudyImporter(object):
 
     def importInBothFiles():
         (words_to_add_new, jisho_failures_new) = StudyImporter._processInNew('in_new.txt')
-        if Importer.VERBOSE:
+        if StudyImporter.VERBOSE:
             showInfo("Transformed in_new")
         StudyImporter._importWords('in_new.txt', 'output_in_new.txt', words_to_add_new, jisho_failures_new)
 
