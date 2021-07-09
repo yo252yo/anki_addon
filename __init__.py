@@ -1,7 +1,9 @@
 ﻿# -*- coding: utf-8 -*-
-from aqt import mw
+from aqt import AnkiQt, mw
 from aqt.qt import *
+#from aqt.qt import QMessageBox
 from aqt.utils import showInfo
+from anki.hooks import wrap
 
 from .dumps import Dumps
 from .anki import Anki
@@ -24,6 +26,7 @@ def doRoutine():
   Counters.resetCounters()
   StudyImporter.importInBothFiles()
   KanjiImporter.importKanjis()
+  #KanjiImporter.importKanjisSim()
   Anki.resetDecks()
   CardMaker.updateAllDetails()
   CardMaker.refreshDetailsForLastKanji()
@@ -44,6 +47,8 @@ def doRoutineVerbose():
     StudyImporter.importInBothFiles()
     showInfo("Import kanjis")
     KanjiImporter.importKanjis()
+    #showInfo("Import kanjis sim")
+    #KanjiImporter.importKanjisSim()
     showInfo("Reset decks")
     Anki.resetDecks()
     showInfo("Update details")
@@ -63,15 +68,15 @@ def addActionMenu(text, function, menu=mw.form.menuTools):
     menu.addAction(action)
 
 
-debugMenu = QMenu('Debug', mw)
+debugMenu = QMenu('YoAnki', mw)
 mw.form.menuTools.addMenu(debugMenu)
 
-addActionMenu("=> Full routine", doRoutine)
-
+addActionMenu("=> Full routine", doRoutine, debugMenu)
 addActionMenu("=> Full routine (verbose)", doRoutineVerbose, debugMenu)
 debugMenu.addSeparator()
 addActionMenu("Import study files", StudyImporter.importInBothFiles, debugMenu)
 addActionMenu("Import kanjis", KanjiImporter.importKanjis, debugMenu)
+addActionMenu("Import kanjis sim", KanjiImporter.importKanjisSim, debugMenu)
 debugMenu.addSeparator()
 addActionMenu("Reset decks", Anki.resetDecks)
 addActionMenu("Force logging", doLogging, debugMenu)
@@ -81,3 +86,13 @@ addActionMenu("Update all Propernouns Details", CardMaker.updateDetailsOfProperN
 addActionMenu("Populate missing Details", CardMaker.populateMissingDeatils, debugMenu)
 addActionMenu("Update All Details", CardMaker.updateAllDetails, debugMenu)
 addActionMenu("Details for last kanji", CardMaker.refreshDetailsForLastKanji, debugMenu)
+
+
+def onClose(self, evt, _old):
+    response = QMessageBox.question(mw,"yoankiclose", "Do you want to do the routine before closing?", QMessageBox.Yes | QMessageBox.No)
+    if response == QMessageBox.Yes:
+        doRoutine()
+
+    _old(self, evt)
+
+AnkiQt.closeEvent = wrap(AnkiQt.closeEvent, onClose, "around")
