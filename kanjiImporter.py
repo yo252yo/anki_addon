@@ -10,7 +10,7 @@ class KanjiImporter(object):
   KANJIFILE = 'D:/Japanese/jap_anki/internal/kanjisImport.txt'
   KANJISIMFILE = 'D:/Japanese/jap_anki/internal/kanjisSimImport.txt'
   KANJIVERSION = "KJ1"
-  KANJISIMVERSION = "KJS1"
+  KANJISIMVERSION = "KJS2"
 
   def _makeKanjiFile():
     kanjis = codecs.open('D:/Japanese/jap_anki/dumps/graph_kanjis_details.txt', 'rb', 'utf-8')
@@ -62,13 +62,13 @@ class KanjiImporter(object):
       if i == 0:
           i = i + 1
           continue
-      file.write(ReadFile._handleWordEncoding(row[0]).replace("\t", "") + '<br/>')
-      file.write(ReadFile._handleWordEncoding(row[1]).replace("\t", "") + '<br/>')
-      file.write(ReadFile._handleWordEncoding(row[2]).replace("\t", "") + '<br/>\t')
+      file.write(ReadFile._handleWordEncoding(row[0]).replace("\t", "") + '<br>')
+      file.write(ReadFile._handleWordEncoding(row[1]).replace("\t", "") + '<br>')
+      file.write(ReadFile._handleWordEncoding(row[2]).replace("\t", "") + '<br>\t')
 
-      file.write(ReadFile._handleWordEncoding(row[4]).replace("\t", "") + '<br/>')
-      file.write(ReadFile._handleWordEncoding(row[5]).replace("\t", "") + '<br/>')
-      file.write(ReadFile._handleWordEncoding(row[6]).replace("\t", "") + '<br/>\t')
+      file.write(ReadFile._handleWordEncoding(row[4]).replace("\t", "") + '<br>')
+      file.write(ReadFile._handleWordEncoding(row[5]).replace("\t", "") + '<br>')
+      file.write(ReadFile._handleWordEncoding(row[6]).replace("\t", "") + '<br>\t')
 
       file.write(KanjiImporter.KANJISIMVERSION + '\r\n')
     kanjis.close()
