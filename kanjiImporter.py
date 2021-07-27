@@ -78,7 +78,7 @@ class KanjiImporter(object):
         deck_id = mw.col.decks.id(":KanjiSim")
         mw.col.decks.select(deck_id)
 
-        m = mw.col.models.byName("NewKanjisim")
+        m = mw.col.models.byName("Kanjisim")
         deck = mw.col.decks.get(deck_id)
 
         deck['mid'] = m['id']
