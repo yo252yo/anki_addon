@@ -38,31 +38,45 @@ class Dumps(object):
         log.write("\r\n")
         log.close()
 
+    def getIvl(card, position):
+        recency = min([1, (1-position)*100])
+        ivl = min([100, card.ivl])
+        if ivl > 30:
+            ivl = 0.7+(ivl-30)/70*0.3
+        else :
+            ivl = (ivl/30)*0.7
+
+        lapses = min([1, 1 - max(0,card.lapses-3)/card.reps])
+        lapses = lapses * lapses
+        total = recency * ivl * lapses
+        return total
+
     def logKanjis(filename):
         log = codecs.open(filename, 'w', 'utf-8')
         kanjis_cards = mw.col.findCards("deck::Kanjis::All")
+        kanjis_cards.sort()
         reverse_cards = mw.col.findCards("deck::Kanjis::Reverse")
+        reverse_cards.sort()
         ivls = {}
 
-        for id in kanjis_cards:
+        for i,id in enumerate(kanjis_cards):
             card = mw.col.getCard(id)
             note = mw.col.getCard(id).note()
-            ivls[note["Kanji"]] = card.ivl
+            ivls[note["Kanji"]] = Dumps.getIvl(card, i/len(kanjis_cards))
 
-        for id in reverse_cards:
+        for i,id in enumerate(reverse_cards):
             card = mw.col.getCard(id)
             note = mw.col.getCard(id).note()
             if note["Kanji"] in ivls:
                 reverseivl = ivls[note["Kanji"]]
-                m = min(reverseivl, card.ivl)
-                avg_ivl = math.pow(m * m * m * reverseivl * card.ivl, 0.2)
-                ivls[note["Kanji"]] = min(3*m, avg_ivl)
+                ivl = Dumps.getIvl(card, i/len(reverse_cards))
+                ivls[note["Kanji"]] = ivl * reverseivl
             else:
-                ivls[note["Kanji"]] = card.ivl
+                ivls[note["Kanji"]] = Dumps.getIvl(card, i/len(reverse_cards))
 
         log.write("Kanji\t\t ivl\r\n")
         for kanji in ivls:
-            log.write(kanji + "\t\t" + str(math.ceil(ivls[kanji])) + "\r\n")
+            log.write(kanji + "\t\t" + str(ivls[kanji]) + "\r\n")
 
         log.close()
 

@@ -10,7 +10,7 @@ class KanjiImporter(object):
   KANJIFILE = 'D:/Japanese/jap_anki/internal/kanjisImport.txt'
   KANJISIMFILE = 'D:/Japanese/jap_anki/internal/kanjisSimImport.txt'
   KANJIVERSION = "KJ1"
-  KANJISIMVERSION = "KJS2"
+  KANJISIMVERSION = "KJS4"
 
   def _makeKanjiFile():
     kanjis = codecs.open('D:/Japanese/jap_anki/dumps/graph_kanjis_details.txt', 'rb', 'utf-8')
