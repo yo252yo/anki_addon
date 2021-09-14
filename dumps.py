@@ -46,7 +46,7 @@ class Dumps(object):
         else :
             ivl = (ivl/30)*0.7
 
-        lapses = min([1, 1 - max(0,card.lapses-3)/card.reps])
+        lapses = min([1, 1 - max(0,card.lapses-3)/max(1,card.reps)])
         lapses = lapses * lapses
         total = recency * ivl * lapses
         return total
