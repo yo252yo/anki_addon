@@ -2,6 +2,7 @@ from aqt import mw
 from .string import String
 from .counters import Counters
 from .dumps import Dumps
+from aqt.utils import showInfo
 
 TAG_MANUAL = "+"
 TAG_TRASH = "XX"
@@ -89,3 +90,35 @@ class Anki(object):
         Counters.increment("dupe_cleaned_"+filename, value=len(ids))
         Dumps.dump_ids('D:/Japanese/jap_anki/internal/.cleanups.'+filename+'.txt', ids)
         mw.col.remNotes(ids)
+
+    def changeDeckCanWrite(filename):
+        ids_can_write = mw.col.findCards("(mid:1432900443242 -Details:*$* -Details:)")
+        ids_cant_write = mw.col.findCards("(mid:1432882338168 $)")
+        Counters.increment("adjusted_can_write", value=len(ids_can_write))
+        Counters.increment("adjusted_cant_write", value=len(ids_cant_write))
+
+        mid_can_write = mw.col.models.byName("Vocabulary")['id']
+        mid_cant_write = mw.col.models.byName("Vocabulary cant write")['id']
+        did_can_write = mw.col.decks.id(":Vocabulary::Reading")
+        did_cant_write = mw.col.decks.id(":Vocabulary::Listening")
+
+        for id in ids_can_write:
+          card = mw.col.getCard(id)
+          note = card.note()
+          note.mid = mid_can_write
+          if (card.did == did_cant_write):
+            card.did = did_can_write
+          note.flush()
+          card.flush()
+
+        for id in ids_cant_write:
+          card = mw.col.getCard(id)
+          note = card.note()
+          note.mid = mid_cant_write
+          if (card.did == did_can_write):
+            card.did = did_cant_write
+          note.flush()
+          card.flush()
+
+        mw.reset()
+        mw.col.sched.reschedCards(ids_can_write, 0, 7)
