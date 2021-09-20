@@ -21,7 +21,6 @@ def doLogging():
 
 
 def doRoutine():
-  mw.progress.start(immediate=True)
   mw.onSync()
   Counters.resetCounters()
   Anki.changeDeckCanWrite()
@@ -32,7 +31,6 @@ def doRoutine():
   CardMaker.updateAllDetails()
   CardMaker.refreshDetailsForLastKanji()
   mw.onSync()
-  mw.progress.finish()
   doLogging()
   Counters.show()
   Counters.sanityCheck()

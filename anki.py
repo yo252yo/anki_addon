@@ -91,7 +91,7 @@ class Anki(object):
         Dumps.dump_ids('D:/Japanese/jap_anki/internal/.cleanups.'+filename+'.txt', ids)
         mw.col.remNotes(ids)
 
-    def changeDeckCanWrite(filename):
+    def changeDeckCanWrite():
         ids_can_write = mw.col.findCards("(mid:1432900443242 -Details:*$* -Details:)")
         ids_cant_write = mw.col.findCards("(mid:1432882338168 $)")
         Counters.increment("adjusted_can_write", value=len(ids_can_write))
