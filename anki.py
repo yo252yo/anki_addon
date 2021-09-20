@@ -3,6 +3,7 @@ from .string import String
 from .counters import Counters
 from .dumps import Dumps
 from aqt.utils import showInfo
+import math
 
 TAG_MANUAL = "+"
 TAG_TRASH = "XX"
@@ -90,6 +91,15 @@ class Anki(object):
         Counters.increment("dupe_cleaned_"+filename, value=len(ids))
         Dumps.dump_ids('D:/Japanese/jap_anki/internal/.cleanups.'+filename+'.txt', ids)
         mw.col.remNotes(ids)
+
+    def rescheduleLatestKanjis():
+        ids = mw.col.findNotes("deck::Kanjis added:3")
+        for id in ids:
+          note = mw.col.getNote(id)
+          k = note["Kanji"]
+          rids = mw.col.findNotes(k)
+          mw.col.sched.reschedCards(rids, 0, math.floor(len(rids)/5))
+          Counters.increment("rescheduled_kanjis", value=len(rids))
 
     def changeDeckCanWrite():
         ids_can_write = mw.col.findCards("(mid:1432900443242 -Details:*$* -Details:)")
