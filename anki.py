@@ -43,9 +43,8 @@ class Anki(object):
       if card['is_sink']:
         return
       Counters.increment("rescheduled", value=len(card['cid']))
-      mw.col.sched.unsuspendCards(card['cid'])
-      mw.col.sched.resetCards(card['cid'])
-      mw.col.sched.reschedCards(card['cid'],0,7)
+      mw.col.sched.unsuspend_cards(card['cid'])
+      mw.col.sched.schedule_cards_as_new(card['cid'])
 
     def deleteCard(card):
       Counters.increment("deleted", value=len(card['cid']))
@@ -57,9 +56,7 @@ class Anki(object):
         return False
       Counters.increment("kanjis")
       cards_ids = mw.col.findCards("Kanji:" + word + " or Kanji0:" + word + " or Kanji2:" + word + " or Kanji3:" + word + " or Kanji4:" + word)
-      #mw.col.sched.unsuspendCards(cards_ids)
-      #mw.col.sched.resetCards(cards_ids)
-      mw.col.sched.reschedCards(cards_ids, 0, 1)
+      mw.col.sched.set_due_date(cards_ids,"0")
       return cards_ids
 
     def resetDecks():
@@ -98,7 +95,7 @@ class Anki(object):
           note = mw.col.getNote(id)
           k = note["Kanji"]
           rids = mw.col.findNotes(k)
-          mw.col.sched.reschedCards(rids, 0, math.floor(len(rids)/5))
+          mw.col.sched.set_due_date(rids, "0")#str(math.floor(len(rids)/5)))
           Counters.increment("rescheduled_kanjis", value=len(rids))
 
     def changeDeckCanWrite():
@@ -131,4 +128,4 @@ class Anki(object):
           card.flush()
 
         mw.reset()
-        mw.col.sched.reschedCards(ids_can_write, 0, 7)
+        mw.col.sched.set_due_date(ids_can_write, "3")
