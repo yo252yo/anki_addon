@@ -58,11 +58,17 @@ class Dumps(object):
         reverse_cards = mw.col.findCards("deck::Kanjis::Reverse")
         reverse_cards.sort()
         ivls = {}
+        rivls = {}
+        lapses = {}
+        reps = {}
 
         for i,id in enumerate(kanjis_cards):
             card = mw.col.getCard(id)
             note = mw.col.getCard(id).note()
             ivls[note["Kanji"]] = Dumps.getIvl(card, i/len(kanjis_cards))
+            rivls[note["Kanji"]] = card.ivl
+            lapses[note["Kanji"]] = card.lapses
+            reps[note["Kanji"]] = card.reps
 
         for i,id in enumerate(reverse_cards):
             card = mw.col.getCard(id)
