@@ -82,7 +82,7 @@ class Dumps(object):
 
         log.write("Kanji\t\t ivl\r\n")
         for kanji in ivls:
-            log.write(kanji + "\t\t" + str(ivls[kanji]) + "\r\n")
+            log.write(kanji + "\t\t" + str(ivls[kanji]) + "\t" + str(rivls[kanji]) + "\t" + str(reps[kanji]) + "\t" + str(lapses[kanji]) + "\r\n")
 
         log.close()
 
