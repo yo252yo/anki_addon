@@ -74,18 +74,19 @@ class Dumps(object):
         for i,id in enumerate(reverse_cards):
             card = mw.col.getCard(id)
             note = mw.col.getCard(id).note()
+            k = note["Kanji"]
             if k in ivls:
                 reverseivl = ivls[k]
                 ivl = Dumps.getIvl(card, i/len(reverse_cards))
-                ivls[k] = ivl * reverseivl
-                rivls[k] = card.ivl
-                lapses[k] = card.lapses
-                reps[k] = card.reps
-            else:
-                ivls[k] = Dumps.getIvl(card, i/len(reverse_cards))
+                ivls[k] =  ivl * reverseivl
                 rivls[k] = max(rivls[k], card.ivl)
                 lapses[k] = lapses[k] + card.lapses
                 reps[k] = reps[k] + card.reps
+            else:
+                ivls[k] = Dumps.getIvl(card, i/len(reverse_cards))
+                rivls[k] = card.ivl
+                lapses[k] = card.lapses
+                reps[k] = card.reps
 
         log.write("Kanji\t\t ivl\r\n")
         for kanji in ivls:
