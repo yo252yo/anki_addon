@@ -35,6 +35,7 @@ class Dumps(object):
         Dumps.write(log, "mid:1432882338168 -is:suspended -tag:XX prop:ivl>21") # vocabulary known
         Dumps.write(log, "mid:1432900443242 -is:suspended -tag:XX prop:ivl>21") # vocabulary cant write known
         Dumps.write(log, "deck::Kanjis::All prop:ivl>21") # kanjis known
+        Dumps.write(log, "prop:due=1")
         log.write("\r\n")
         log.close()
 
@@ -46,7 +47,7 @@ class Dumps(object):
         else :
             ivl = (ivl/30)*0.7
 
-        lapses = min([1, 1 - max(0,card.lapses-3)/max(1,card.reps)])
+        lapses = min([1, 1 - max(0,card.lapses-3)/max(1,card.reps/3)])
         lapses = lapses * lapses
         total = recency * ivl * lapses
         return total
