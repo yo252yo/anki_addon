@@ -132,6 +132,39 @@ class StudyImporter(object):
 
         for original_word in words:
             Counters.increment(name + "_processed")
+            card = Anki.getCardForWord(original_word)
+            if card:
+                Anki.rescheduleCard(card)
+                Counters.increment(name + "_resched")
+            else:
+                # Resched our best guess
+                real_word = Jisho.getJisho(original_word)[0]
+                if real_word:
+                    card = Anki.getCardForWord(real_word['word'])
+                    if card:
+                        Anki.rescheduleCard(card)
+                        Counters.increment(name + "_resched")
+
+                # Lookup exact word
+                word = original_word
+                jisho = Jisho.getJisho(word)[0]
+                if jisho:
+                    card = Anki.getCardForWord(jisho['word'])
+                    if not card:
+                        Counters.increment(name + "_new")
+                        words_to_add.add(jisho['word'])
+                    else:
+                        Anki.rescheduleCard(card)
+                        Counters.increment(name + "_resched")
+        return (words_to_add, [])
+
+    def _processInAsync(name):
+        words = ReadFile.fileToRawWords(name + '.txt')
+
+        words_to_add = set()
+
+        for original_word in words:
+            Counters.increment(name + "_processed")
             if Anki.rescheduleIfKanjis(original_word):
                 continue
             card = Anki.getCardForWord(original_word)
@@ -181,7 +214,7 @@ class StudyImporter(object):
             showInfo("Transformed in_review")
         StudyImporter._importWords('in_review.txt', 'output_in_review.txt', words_to_add_review, jisho_failures_review)
 
-        (words_to_add_async, jisho_failures_async) = StudyImporter._processInReview('in_async')
+        (words_to_add_async, jisho_failures_async) = StudyImporter._processInAsync('in_async')
         if StudyImporter.VERBOSE:
             showInfo("Transformed in_async")
         StudyImporter._importWords('in_async.txt', 'output_in_async.txt', words_to_add_async, jisho_failures_async)
