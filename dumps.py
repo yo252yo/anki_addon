@@ -95,6 +95,23 @@ class Dumps(object):
 
         log.close()
 
+    def logKeywords(filename):
+        log = codecs.open(filename, 'w', 'utf-8')
+        kw_cards = mw.col.findCards("deck::Keywords")
+        kw_cards.sort()
+        done = []
+
+        log.write("Keyword\t Translation\t Pronounciation\r\n")
+        for i,id in enumerate(kw_cards):
+            card = mw.col.getCard(id)
+            note = mw.col.getCard(id).note()
+            if note["Writing"] in done:
+                continue
+            log.write(note["Writing"] + "\t" + note["Translation"] + "\t" + note["Pronounciation"]+ "\r\n")
+            done.append(note["Writing"])
+
+        log.close()
+
     def logCounters(filename):
         log = codecs.open(filename, 'a', 'utf-8')
         date = datetime.datetime.today().strftime('%Y-%m-%d')
