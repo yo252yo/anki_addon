@@ -99,16 +99,29 @@ class Dumps(object):
         log = codecs.open(filename, 'w', 'utf-8')
         kw_cards = mw.col.findCards("deck::Keywords")
         kw_cards.sort()
-        done = []
+        kanjis = {}
+        translations = {}
+        pronounciations = {}
 
-        log.write("Keyword\t Translation\t Pronounciation\r\n")
         for i,id in enumerate(kw_cards):
             card = mw.col.getCard(id)
             note = mw.col.getCard(id).note()
-            if note["Writing"] in done:
-                continue
-            log.write(note["Writing"] + "\t" + note["Translation"] + "\t" + note["Pronounciation"]+ "\r\n")
-            done.append(note["Writing"])
+            word = note["Writing"]
+            translations[word] =  note["Translation"]
+            pronounciations[word] =  note["Pronounciation"]
+            for k in word:
+                if not k in kanjis:
+                    kanjis[k] = []
+                if not word in kanjis[k]:
+                    kanjis[k].append(word)
+
+        log.write("Kanji\t\t Keywords\r\n")
+        for k in kanjis:
+            log.write(k + "\t\t")
+            for word in kanjis[k]:
+                log.write(word + " (" + pronounciations[word] + ") - " + translations[word][:30] + " | ")
+
+            log.write("\r\n")
 
         log.close()
 
