@@ -92,3 +92,8 @@ class CardMaker(object):
 
     def refreshDetailsForLastKanji():
         CardMaker._refreshDetailsForSearch(ReadFile.getLastKanji())
+
+    def refreshDetailsForAllKanjis():
+        kanjis = ReadFile.getKanjisDict()
+        for k in kanjis:
+            CardMaker._refreshDetailsForSearch(k)

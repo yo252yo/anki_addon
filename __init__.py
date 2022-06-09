@@ -93,6 +93,7 @@ addActionMenu("Update all Propernouns Details", CardMaker.updateDetailsOfProperN
 addActionMenu("Populate missing Details", CardMaker.populateMissingDeatils, debugMenu)
 addActionMenu("Update All Details", CardMaker.updateAllDetails, debugMenu)
 addActionMenu("Details for last kanji", CardMaker.refreshDetailsForLastKanji, debugMenu)
+addActionMenu("Update All Known Kanjis Details", CardMaker.refreshDetailsForAllKanjis, debugMenu)
 
 
 def onClose(self, evt, _old):
