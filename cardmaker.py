@@ -96,4 +96,4 @@ class CardMaker(object):
     def refreshDetailsForAllKanjis():
         kanjis = ReadFile.getKanjisDict()
         for k in kanjis:
-            CardMaker._refreshDetailsForSearch(k)
+            CardMaker._refreshDetailsForSearch(k + " (? OR $)")
