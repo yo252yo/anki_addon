@@ -5,6 +5,8 @@ from .string import String
 from aqt.utils import showInfo
 import re
 
+from aqt.qt import *
+
 class CardMaker(object):
     VERBOSE = False
     VersionAG = "AG3"
@@ -80,6 +82,12 @@ class CardMaker(object):
                 showInfo("Failed:" + str(err))
         if CardMaker.VERBOSE:
             showInfo("Updated cards:" + str(len(cards)))
+
+    def updateDetailsPrompt():
+        text, ok = QInputDialog.getText(mw, 'Update cards from a given search', "Query", QLineEdit.Normal, "")
+        if not ok:
+            return
+        CardMaker._refreshDetailsForSearch(text)
 
     def updateAllDetails():
         CardMaker._refreshDetailsForSearch("-tag:" + CardMaker.VersionAD)
