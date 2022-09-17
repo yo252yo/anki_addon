@@ -19,6 +19,8 @@ class String(object):
       result = set()
       result.add(word)
       kanjiword = String.kanjify(word)
+      if len(kanjiword) < 3:
+          return result
       for i in range(0, len(kanjiword)):
         for j in range(i, len(kanjiword)):
             subword = kanjiword[i:(j+1)]
