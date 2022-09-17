@@ -29,7 +29,7 @@ class StudyImporter(object):
                   is_kana = True
 
               if is_kana:
-                file.write(jisho['word'].replace("\t", "") + "<br />" + jisho['pronunciation'].replace("\t", "") + '\t')
+                file.write(jisho['word'].replace("\t", "") + "<br>" + jisho['pronunciation'].replace("\t", "") + '\t')
               else:
                 file.write(jisho['word'].replace("\t", "") + '\t')
               file.write(jisho['definition'].replace("\t", "") + '\t')
@@ -144,18 +144,9 @@ class StudyImporter(object):
                     if card:
                         Anki.rescheduleCard(card)
                         Counters.increment(name + "_resched")
-
-                # Lookup exact word
-                word = original_word
-                jisho = Jisho.getJisho(word)[0]
-                if jisho:
-                    card = Anki.getCardForWord(jisho['word'])
-                    if not card:
-                        Counters.increment(name + "_new")
-                        words_to_add.add(jisho['word'])
                     else:
-                        Anki.rescheduleCard(card)
-                        Counters.increment(name + "_resched")
+                        Counters.increment(name + "_new")
+                        words_to_add.add(real_word['word'])
         return (words_to_add, [])
 
     def _processInAsync(name):
@@ -174,7 +165,7 @@ class StudyImporter(object):
             else:
                 # Resched our best guess
                 real_word = Jisho.getJisho(original_word)[0]
-                if real_word:
+                if real_word and len(real_word['word']) > 1:
                     card = Anki.getCardForWord(real_word['word'])
                     if card:
                         Anki.rescheduleCard(card)
