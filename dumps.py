@@ -106,7 +106,7 @@ class Dumps(object):
         for i,id in enumerate(kw_cards):
             card = mw.col.getCard(id)
             note = mw.col.getCard(id).note()
-            word = note["Writing"]
+            word = note["KWWriting"]
             translations[word] =  note["Translation"]
             pronounciations[word] =  note["Pronounciation"]
             for k in word:
