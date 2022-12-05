@@ -74,6 +74,9 @@ class CardMaker(object):
                     if "Writing" in note:
                         note["Writing"] = CardMaker.sanitize(note["Writing"])
                         word = note["Writing"]
+                    if "KWWriting" in note:
+                        note["KWWriting"] = CardMaker.sanitize(note["KWWriting"])
+                        word = note["KWWriting"]
                     if word:
                         note["Details"] = CardMaker._makeDetailsString(word, ("KANA" in note.tags))
                 note.flush()
