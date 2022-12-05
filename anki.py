@@ -46,6 +46,14 @@ class Anki(object):
       mw.col.sched.unsuspend_cards(card['cid'])
       mw.col.sched.schedule_cards_as_new(card['cid'])
 
+    def softRescheduleCard(card):
+        if card['is_sink']:
+          return
+        Counters.increment("rescheduled", value=len(card['cid']))
+        Counters.increment("softrescheduled", value=len(card['cid']))
+        mw.col.sched.unsuspend_cards(card['cid'])
+        mw.col.sched.set_due_date(card['cid'],"0-1")
+
     def deleteCard(card):
       Counters.increment("deleted", value=len(card['cid']))
       mw.col.remCards(card['cid'])

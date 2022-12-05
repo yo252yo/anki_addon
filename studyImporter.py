@@ -142,7 +142,7 @@ class StudyImporter(object):
                 if real_word:
                     card = Anki.getCardForWord(real_word['word'])
                     if card:
-                        Anki.rescheduleCard(card)
+                        Anki.softRescheduleCard(card)
                         Counters.increment(name + "_resched")
                     else:
                         Counters.increment(name + "_new")
@@ -168,10 +168,10 @@ class StudyImporter(object):
                 if real_word and len(real_word['word']) > 1:
                     card = Anki.getCardForWord(real_word['word'])
                     if card:
-                        Anki.rescheduleCard(card)
+                        Anki.softRescheduleCard(card)
                         Counters.increment(name + "_resched")
 
-                # Expand word
+                # Expand word, add new words, ignore other roots
                 words_expanded = String.expandToSubwords(original_word)
                 for word in words_expanded:
                     card = Anki.getCardForWord(word)
