@@ -20,6 +20,8 @@ class StudyImporter(object):
 
         for word in words:
           for jisho in Jisho.getJisho(word):
+              if not jisho['word']:
+                continue
               Counters.increment("new")
               Counters.increment("new:" + filename)
               Counters.increment("new_" + extra_tag)
