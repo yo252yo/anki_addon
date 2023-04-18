@@ -119,7 +119,7 @@ class Dumps(object):
         for k in kanjis:
             log.write(k + "\t\t")
             for word in kanjis[k]:
-                log.write(word + " (" + pronounciations[word] + ") - " + translations[word][:30] + " | ")
+                log.write(word + " (" + pronounciations[word].replace(',','') + ") - " + translations[word][:30].replace(',','') + " | ")
 
             log.write("\r\n")
 
