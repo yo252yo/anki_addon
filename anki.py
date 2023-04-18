@@ -63,7 +63,7 @@ class Anki(object):
       if len(word) != 1:
         return False
       Counters.increment("kanjis")
-      cards_ids = mw.col.findCards("Kanji:" + word + " or Kanji0:" + word + " or Kanji2:" + word + " or Kanji3:" + word + " or Kanji4:" + word)
+      cards_ids = mw.col.findCards("Kanji:" + word + " or Kanjis:*" + word + "*")
       mw.col.sched.set_due_date(cards_ids,"0-1")
       return cards_ids
 
