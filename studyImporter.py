@@ -47,7 +47,7 @@ class StudyImporter(object):
         file.close()
 
     def _importFileToCards(file, model_name):
-        deck_id = mw.col.decks.id(":Expressions")
+        deck_id = mw.col.decks.id("Expressions")
         mw.col.decks.select(deck_id)
 
         m = mw.col.models.byName(model_name)

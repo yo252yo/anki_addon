@@ -114,8 +114,8 @@ class Anki(object):
 
         mid_can_write = mw.col.models.byName("Vocabulary")['id']
         mid_cant_write = mw.col.models.byName("Vocabulary cant write")['id']
-        did_can_write = mw.col.decks.id(":Vocabulary::Reading")
-        did_cant_write = mw.col.decks.id(":Vocabulary::Listening")
+        did_can_write = mw.col.decks.id("Vocabulary::Reading")
+        did_cant_write = mw.col.decks.id("Vocabulary::Listening")
 
         for id in ids_can_write:
           card = mw.col.getCard(id)

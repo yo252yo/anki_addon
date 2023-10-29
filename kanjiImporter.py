@@ -31,7 +31,7 @@ class KanjiImporter(object):
     file.close()
 
   def _importKanjiFile():
-        deck_id = mw.col.decks.id(":Kanjis")
+        deck_id = mw.col.decks.id("Kanjis")
         mw.col.decks.select(deck_id)
 
         m = mw.col.models.byName("Kanji")
@@ -75,7 +75,7 @@ class KanjiImporter(object):
     file.close()
 
   def _importKanjiSimFile():
-        deck_id = mw.col.decks.id(":KanjiSim")
+        deck_id = mw.col.decks.id("KanjiSim")
         mw.col.decks.select(deck_id)
 
         m = mw.col.models.byName("Kanjisim")
