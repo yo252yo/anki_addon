@@ -23,10 +23,10 @@ class Dumps(object):
         Dumps.write(log, "rated:1")
         log.write("0\t")
         Dumps.write(log, "(tag:AG2 or tag:AG1)")
-        Dumps.write(log, "deck::Vocabulary::Listening")
-        Dumps.write(log, "deck::Vocabulary::Reading")
-        Dumps.write(log, "deck::Vocabulary::Talking")
-        Dumps.write(log, "deck::Kanjis::All") # kanjis
+        Dumps.write(log, "deck:Vocabulary::Listening")
+        Dumps.write(log, "deck:Vocabulary::Reading")
+        Dumps.write(log, "deck:Vocabulary::Talking")
+        Dumps.write(log, "deck:Kanjis::All") # kanjis
         Dumps.write(log, "(mid:1432882338168 or mid:1432900443242) is:suspended") # suspended voc
         base = "(mid:1432882338168 or mid:1432900443242) -is:suspended -tag:XX "
         Dumps.write(log, base + "is:new") # new voc
@@ -34,7 +34,7 @@ class Dumps(object):
         Dumps.write(log, base + "prop:ivl>21") # mature voc
         Dumps.write(log, "mid:1432882338168 -is:suspended -tag:XX prop:ivl>21") # vocabulary known
         Dumps.write(log, "mid:1432900443242 -is:suspended -tag:XX prop:ivl>21") # vocabulary cant write known
-        Dumps.write(log, "deck::Kanjis::All prop:ivl>21") # kanjis known
+        Dumps.write(log, "deck:Kanjis::All prop:ivl>21") # kanjis known
         Dumps.write(log, "prop:due=1")
         log.write("\r\n")
         log.close()
@@ -54,9 +54,9 @@ class Dumps(object):
 
     def logKanjis(filename):
         log = codecs.open(filename, 'w', 'utf-8')
-        kanjis_cards = mw.col.findCards("deck::Kanjis::All")
+        kanjis_cards = mw.col.findCards("deck:Kanjis::All")
         kanjis_cards.sort()
-        reverse_cards = mw.col.findCards("deck::Kanjis::Reverse")
+        reverse_cards = mw.col.findCards("deck:Kanjis::Reverse")
         reverse_cards.sort()
         ivls = {}
         rivls = {}
@@ -97,7 +97,7 @@ class Dumps(object):
 
     def logKeywords(filename):
         log = codecs.open(filename, 'w', 'utf-8')
-        kw_cards = mw.col.findCards("deck::Keywords")
+        kw_cards = mw.col.findCards("deck:Keywords")
         kw_cards.sort()
         kanjis = {}
         translations = {}

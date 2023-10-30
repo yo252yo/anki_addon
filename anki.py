@@ -98,7 +98,7 @@ class Anki(object):
         mw.col.remNotes(ids)
 
     def rescheduleLatestKanjis():
-        ids = mw.col.findNotes("deck::Kanjis added:3")
+        ids = mw.col.findNotes("deck:Kanjis added:3")
         for id in ids:
           note = mw.col.getNote(id)
           k = note["Kanji"]
